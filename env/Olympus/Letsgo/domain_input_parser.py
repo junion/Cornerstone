@@ -2,7 +2,7 @@
 from datetime import datetime
 import logging
 
-from cornerstone.datatypes.speech_input import UserAction, InputHypothesis
+from cornerstone.datatypes.speech_input import UserAction, SLUHyp, SpeechInputEvent
 
 
 app_logger = logging.getLogger('DomainInput')
@@ -385,7 +385,7 @@ speech_input_negate,
 # Return the parsed results, input hyps.
 #===============================================================================
 def parse(state, actuator, frame):
-    input_hyps = []
+    speech_input = SpeechInput()
 
     # when n-bests available, repeat the following as many times as the number of hypotheses
     user_acts = []
@@ -396,14 +396,14 @@ def parse(state, actuator, frame):
             user_acts.append(user_act)
             
     if len(user_acts) > 0:
-        input_hyp = InputHypothesis(user_acts, conf_score)
-        input_hyps.append(input_hyp)
+        slu_hyp = SLUHyp(user_acts, conf_score)
+        speech_input.SLU_Nbests.append(slu_hyp)
     
-    if len(input_hyps) == 0:
-        input_hyps.append(InputHypothesis([UserAction('null', {})], 1.0))
+    if not speech_input.SLU_Nbests:
+        speech_input.SLU_Nbests.append(SLUHyp([UserAction('null', {})], 1.0))
 
-    app_logger.info('Input hypothesis:\n' + str(input_hyps[0]))
+    app_logger.info('Input hypothesis:\n' + str(speech_input.SLU_Nbests.append[0]))
         
-    return input_hyps
+    return speech_input
             
 

@@ -1,16 +1,13 @@
 import os
 import sys
-import exceptions
 import traceback
-import logging.config
 import logging
-import threading
 import Queue
 
 import Galaxy, GalaxyIO
 
 from config.global_config import init_config, get_config
-from agent_thread import AgentThread
+from env.Olympus.agent_thread import AgentThread
 
 
 #===============================================================================
@@ -149,6 +146,7 @@ def begin_session(env, frame):
         try:
             log_prefix = frame[':hub_log_prefix'] + '-dialog.log'
             log_dir = frame[':hub_logdir']
+            print log_dir
         except KeyError:
             print "Can't find log information"
         else:

@@ -54,3 +54,6 @@ docs/_build/
 
 # all ~ files
 *~
+
+# log
+log/

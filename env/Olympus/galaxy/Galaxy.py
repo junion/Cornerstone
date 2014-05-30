@@ -190,6 +190,8 @@ FrameParsingError = "FrameParsingError"
 #
 ##################################################
 
+import cGalaxy
+
 cGalaxy.Gal_InitializeStatics()
 
 from cGalaxy import GC_VERSION, GAL_KEY_ALWAYS, GAL_KEY_SOMETIMES, \

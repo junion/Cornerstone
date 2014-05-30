@@ -32,14 +32,14 @@ class CornerstoneAgent(object):
         self.app_logger.info('Cornerstone agent created')
         
     def run(self, in_events):
-        out_events = self.controller(in_events)
+        out_events = self.controller.run(in_events)
         while True: 
             # check if out_events are outputs to environment
             if False:
                 # handle out_events
                 
                 # get new out_events
-                out_events = self.controller()
+                out_events = self.controller.run(None)
             else:
                 break    
         return out_events

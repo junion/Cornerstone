@@ -44,7 +44,7 @@ class Controller(object):
         del self.kernel
         
     def run(self, in_events):
-        self.agent.ExecuteCommandLine('run')
+        print self.agent.ExecuteCommandLine('run')
         out_events = Events()
         out_events.add_event(
             'speech',
@@ -59,4 +59,5 @@ class Controller(object):
             TTSConfigOutputEvent('''   :non-listening "true"
    :non-repeatable "true"
 '''))
+        return out_events
         

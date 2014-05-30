@@ -29,7 +29,8 @@ class Events(collections.MutableSequence):
 
     def add_event(self, event_type, event):
         if event_type not in ['begin', 'speech', 'bargein',
-                              'asr_config', 'tts_config']:
+                              'asr_config', 'tts_config',
+                              'execute']:
             raise RuntimeError('Invalid event type')
         self.list.append({'event_type': event_type, 'event': event})
 

@@ -2,10 +2,13 @@
 from datetime import datetime
 import logging
 
+from cornerstone.datatypes.events import Events
+from cornerstone.datatypes.execution_output import ExecutionOutputEvent
 from cornerstone.datatypes.speech_input import UserAction, SLUHyp, SpeechInputEvent
 
 
-app_logger = logging.getLogger('DomainInput')
+
+app_logger = logging.getLogger('DomainInputParser')
 
 #=============================================================================
 # building a priority list of semantic mapping functions
@@ -212,11 +215,13 @@ def _register_time_info(state, time, info):
     
 def speech_input_time(state, actuator, frame):
     if frame[':properties'].has_key(':[4_datetime]'):
-        system_act = OutputEvent(
-                        'execute', 
-                        {'operation': 'time_parse',
-                         'time': frame[':properties'][':gal_slotsframe']})
-        actuator.execute(state, system_act)
+        out_events = Events()
+        out_events.add_event(
+            'execute',
+            ExecutionOutputEvent(
+                {'operation': 'time_parse',
+                 'time': frame[':properties'][':gal_slotsframe']}))
+        actuator.execute(state, out_events)
 
         time_parse = state.time_parses[frame[':properties'][':gal_slotsframe']]
         
@@ -385,7 +390,7 @@ speech_input_negate,
 # Return the parsed results, input hyps.
 #===============================================================================
 def parse(state, actuator, frame):
-    speech_input = SpeechInput()
+    speech_input = SpeechInputEvent()
 
     # when n-bests available, repeat the following as many times as the number of hypotheses
     user_acts = []

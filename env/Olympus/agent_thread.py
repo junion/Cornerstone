@@ -79,7 +79,7 @@ class AgentThread(threading.Thread):
                 self.app_logger.info('New event: %s' % str(in_events)) 
                 self._update_state_for_event(frame, in_events)
                 # call the agent with the input and get output events
-                out_events = self.agent.run_by_output(in_events)
+                out_events = self.agent.run(in_events)
                 self.app_logger.info('Out event: %s' % str(out_events))
                 # convert the cornerstone output to a galaxy frame
                 self.actuator.execute(self.session_state, out_events)

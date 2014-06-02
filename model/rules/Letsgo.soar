@@ -1,16 +1,3 @@
-
-sp {propose*hello-world
-   (state <s> ^type state)
--->
-   (<s> ^operator <o> +)
-   (<o> ^name hello-world)
-}
-
-sp {apply*hello-world
-   (state <s> ^operator <o>)
-   (<o> ^name hello-world)
--->
-   (write |Hello World|)
-   (halt)
-}
-
+pushd letsgo
+source letsgo_source.soar
+popd

@@ -1,0 +1,8 @@
+sp {letsgo*apply*remove-completed
+   (state <s> ^operator <op>
+              ^io.output-link <out>)
+   (<out> ^speak <speak>)
+   (<speak> ^status complete)
+-->
+   (<out> ^speak <speak> -)
+}

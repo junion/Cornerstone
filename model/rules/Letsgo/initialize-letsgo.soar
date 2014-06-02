@@ -1,0 +1,35 @@
+sp {letsgo*propose*initialize-letsgo
+   (state <s> ^superstate nil
+             -^name)
+-->
+   (<s> ^operator <o> +)
+   (<o> ^name initialize-letsgo)
+}
+
+sp {letsgo*apply*initialize-letsgo
+   (state <s> ^operator <op>)
+   (<op> ^name initialize-letsgo)
+-->
+   (<s> ^user-goal <goal>)
+   (<goal> ^concept <c1>
+           ^concept <c2>
+           ^concept <c3>
+           ^concept <c4>
+           ^concept <c5>)
+   (<c1> ^name route
+         ^value nil
+         ^score 0.0)
+   (<c2> ^name from
+         ^value nil
+         ^score 0.0)
+   (<c3> ^name to
+         ^value nil
+         ^score 0.0)
+   (<c4> ^name date
+         ^value nil
+         ^score 0.0)
+   (<c5> ^name time
+         ^value nil
+         ^score 0.0)
+}
+

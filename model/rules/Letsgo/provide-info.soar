@@ -1,0 +1,6 @@
+sp {letsgo*propose*provide-info
+   (state <s> ^name letsgo)
+-->
+   (<s> ^operator <op> + =)
+   (<op> ^name provide-info)
+}

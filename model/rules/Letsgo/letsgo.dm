@@ -1,4 +1,4 @@
-72
+79
 SOAR_ID 0
 SOAR_ID 1
 SOAR_ID 2
@@ -39,7 +39,7 @@ ENUMERATION 36 1 ask-continue
 SOAR_ID 37
 ENUMERATION 38 1 end-session
 SOAR_ID 39
-ENUMERATION 40 1 update-concept-belief
+ENUMERATION 40 1 update-concept-score
 SOAR_ID 41
 ENUMERATION 42 1 grounding-concept
 SOAR_ID 43
@@ -71,7 +71,14 @@ ENUMERATION 68 1 ask-restart
 SOAR_ID 69
 ENUMERATION 70 1 end-session
 SOAR_ID 71
-75
+SOAR_ID 72
+ENUMERATION 73 1 state
+ENUMERATION 74 1 begin-session
+ENUMERATION 75 1 opening
+SOAR_ID 76
+ENUMERATION 77 1 init-help
+SOAR_ID 78
+83
 0 io 1
 0 name 7
 0 operator 4
@@ -147,3 +154,11 @@ SOAR_ID 71
 65 type 66
 69 name 68
 71 name 70
+72 name 74
+72 operator 76
+72 operator 78
+72 superstate 0
+72 top-state 0
+72 type 73
+76 name 75
+78 name 77

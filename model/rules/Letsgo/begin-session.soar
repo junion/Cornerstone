@@ -1,18 +1,9 @@
 sp {letsgo*propose*begin-session
    (state <s> ^name letsgo
-              ^io.input-link.begin-session <bs>)
+             -^user-opened
+             -^top-state.applied-actions init-help)
 -->
    (<s> ^operator <op> +)
    (<op> ^name begin-session)
-}
-
-sp {letsgo*apply*begin-session
-   (state <s> ^operator <op>
-              ^io.output-link.actions <act>)
-   (<op> ^name begin-session)
--->
-   (<act> ^speak <speak>)
-   (<speak> ^act inform
-            ^welcome nil)
 }
 

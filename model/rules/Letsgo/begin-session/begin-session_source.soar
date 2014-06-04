@@ -1,0 +1,3 @@
+source elaborations.soar
+source init-help.soar
+source opening.soar

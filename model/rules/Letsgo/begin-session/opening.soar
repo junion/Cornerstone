@@ -1,0 +1,11 @@
+sp {letsgo*propose*opening
+   (state <s> ^name begin-session
+              ^top-state.io.input-link.events.begin-session)
+-->
+   (<s> ^operator <op> +)
+   (<op> ^name opening
+         ^actions.speak <speak>)
+   (<speak> ^act inform
+            ^welcome nil)
+}
+

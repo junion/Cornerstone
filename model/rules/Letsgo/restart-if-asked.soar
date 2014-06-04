@@ -1,6 +1,7 @@
 sp {letsgo*propose*restart-if-asked
-   (state <s> ^name letsgo)
+   (state <s> ^name letsgo
+              ^block)
 -->
-   (<s> ^operator <op> + =)
+   (<s> ^operator <op> +)
    (<op> ^name restart-if-asked)
 }

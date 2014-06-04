@@ -1,0 +1,13 @@
+
+
+sp {letsgo*propose*update-concept-score
+   (state <s> ^name letsgo
+              ^io.input-link.events.speech <speech>)
+   (<speech> ^act { <act> << inform affirm negate >> }
+             ^<concept>.hyp <hyp>
+             ^<concept>.score <score>)
+-->
+   (<s> ^operator <op> +)
+   (<op> ^name update-concept-score
+         ^actions.update-concept-score <concept>)
+}

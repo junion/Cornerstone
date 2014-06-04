@@ -1,6 +1,21 @@
-sp {letsgo*propose*provide-info
-   (state <s> ^name letsgo)
+sp {letsgo*propose*provide-info-1
+   (state <s> ^name letsgo
+              ^got-required
+              ^user-goal.concept <c>)
+   (<c> ^name date
+        ^value nil)
 -->
-   (<s> ^operator <op> + =)
+   (<s> ^operator <op> +)
+   (<op> ^name provide-info)
+}
+
+sp {letsgo*propose*provide-info-2
+   (state <s> ^name letsgo
+              ^got-required
+              ^user-goal.concept <c>)
+   (<c> ^name date
+        ^score > 0.9)
+-->
+   (<s> ^operator <op> +)
    (<op> ^name provide-info)
 }

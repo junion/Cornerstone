@@ -1,0 +1,20 @@
+sp {apply*operator*create-action-command
+   (state <s> ^operator <o>
+              ^top-state <ts>)
+   (<ts> ^io.output-link <ol>)
+   (<o> ^name <name>
+        ^actions <act>)
+   (<act> ^<att> <value>)
+-->
+   (<ts> ^applied-actions <name>)
+   (<ol> ^<att> <value>)
+}
+
+sp {apply*operator*remove-command
+   (state <s> ^operator <o>
+        ^top-state.io.output-link <ol>)
+   (<ol> ^<att> <value>)
+   (<value> ^status complete)
+-->
+   (<ol> ^<att> <value> -)
+}

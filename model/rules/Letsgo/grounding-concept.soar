@@ -1,6 +1,8 @@
-xdxsp {letsgo*propose*grounding-concept
-   (state <s> ^name letsgo)
+sp {letsgo*propose*grounding-concept
+   (state <s> ^name letsgo
+              ^user-goal.concept <c>)
+   (<c> ^score < 0.9)
 -->
-   (<s> ^operator <op> + =)
+   (<s> ^operator <op> +)
    (<op> ^name grounding-concept)
 }

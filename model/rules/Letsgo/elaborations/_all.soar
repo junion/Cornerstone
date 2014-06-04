@@ -10,20 +10,11 @@ sp {elaborate*state*top-state
    (<s> ^top-state <ts>)
 }
 
-sp {apply*operator*create-action-command
+sp {apply*operator*remove-input
    (state <s> ^operator <o>
-              ^top-state.io.output-link <ol>)
-   (<o> ^actions <act>)
-   (<act> ^<att> <value>)
+              ^top-state.io.input-link <il>)
+   (<il> ^<att> <value>)
 -->
-   (<ol> ^<att> <value>)
-}
-
-sp {apply*operator*remove-command
-   (state <s> ^operator <o>
-        ^top-state.io.output-link <ol>)
-   (<ol> ^<att> <value>)
-   (<value> ^status complete)
--->
-   (<ol> ^<att> <value> -)
+   (<il> ^<att> <value> -)
+   (write <il> |,| <att> |,| <value>)
 }

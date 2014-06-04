@@ -6,20 +6,21 @@ pushd elaborations
 source elaborations_source.soar
 popd
 source begin-session.soar
+pushd begin-session
+source begin-session_source.soar
+popd
 source canthelp.soar
 source grounding-concept.soar
 pushd grounding-concept
 source grounding-concept_source.soar
 popd
-source init-help.soar
 source initialize-letsgo.soar
 source provide-info.soar
 pushd provide-info
 source provide-info_source.soar
 popd
-source remove-completed.soar
 source restart-if-asked.soar
 pushd restart-if-asked
 source restart-if-asked_source.soar
 popd
-source update-concept-belief.soar
+source update-concept-score.soar

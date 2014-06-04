@@ -10,6 +10,8 @@ sp {letsgo*apply*initialize-letsgo
    (state <s> ^operator <op>)
    (<op> ^name initialize-letsgo)
 -->
+   (<s> ^name letsgo)
+   (<s> ^applied-actions nil)
    (<s> ^user-goal <goal>)
    (<goal> ^concept <c1>
            ^concept <c2>
@@ -17,19 +19,54 @@ sp {letsgo*apply*initialize-letsgo
            ^concept <c4>
            ^concept <c5>)
    (<c1> ^name route
-         ^value nil
-         ^score 0.0)
+         ^top-hyp <c1-hyp1>
+         ^second-hyp <c1-hyp2>
+         ^rest-hyp <c1-hyp3>)
+   (<c1-hyp1> ^value nil
+              ^score 0.0)
+   (<c1-hyp2> ^value nil
+              ^score 0.0)
+   (<c1-hyp3> ^value nil
+              ^score 0.0)
    (<c2> ^name from
-         ^value nil
-         ^score 0.0)
+         ^top-hyp <c2-hyp1>
+         ^second-hyp <c2-hyp2>
+         ^rest-hyp <c2-hyp3>)
+   (<c2-hyp1> ^value nil
+              ^score 0.0)
+   (<c2-hyp2> ^value nil
+              ^score 0.0)
+   (<c2-hyp3> ^value nil
+              ^score 0.0)
    (<c3> ^name to
-         ^value nil
-         ^score 0.0)
+         ^top-hyp <c3-hyp1>
+         ^second-hyp <c3-hyp2>
+         ^rest-hyp <c3-hyp3>)
+   (<c3-hyp1> ^value nil
+              ^score 0.0)
+   (<c3-hyp2> ^value nil
+              ^score 0.0)
+   (<c3-hyp3> ^value nil
+              ^score 0.0)
    (<c4> ^name date
-         ^value nil
-         ^score 0.0)
+         ^top-hyp <c4-hyp1>
+         ^second-hyp <c4-hyp2>
+         ^rest-hyp <c4-hyp3>)
+   (<c4-hyp1> ^value nil
+              ^score 0.0)
+   (<c4-hyp2> ^value nil
+              ^score 0.0)
+   (<c4-hyp3> ^value nil
+              ^score 0.0)
    (<c5> ^name time
-         ^value nil
-         ^score 0.0)
+         ^top-hyp <c5-hyp1>
+         ^second-hyp <c5-hyp2>
+         ^rest-hyp <c5-hyp3>)
+   (<c5-hyp1> ^value nil
+              ^score 0.0)
+   (<c5-hyp2> ^value nil
+              ^score 0.0)
+   (<c5-hyp3> ^value nil
+              ^score 0.0)
 }
 

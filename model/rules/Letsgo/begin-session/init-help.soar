@@ -1,0 +1,11 @@
+sp {letsgo*propose*init-help
+   (state <s> ^name begin-session 
+              ^top-state.applied-actions opening)
+-->
+   (<s> ^operator <op> +)
+   (<op> ^name init-help
+         ^actions.speak <speak>)
+   (<speak> ^act inform
+            ^init-help nil)
+}
+

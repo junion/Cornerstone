@@ -5,23 +5,14 @@ sp {top-state*propose*wait
               ^choices none
              -^operator.name wait)
 -->
-   (<s> ^operator <op> +)
-   (<op> ^name wait
-         ^actions.wait nil)
-}
-
-#   (<s> ^operator <o>)
-#   (<o> ^name wait)
-#}
+   (<s> ^operator <o>)
+   (<o> ^name wait)}
 
 ### This avoids a operator no-change after wait is selected
 ### I've included it just to keep the trace simple
 
-#sp {top-state*apply*wait*random
-#   (state <s> ^operator <o>)
-#   (<o> ^name wait)
-#-->
-#   (<o> ^random elaboration)
-#}
-
-
+sp {top-state*apply*wait*random
+   (state <s> ^operator <o>)
+   (<o> ^name wait)
+-->
+   (<o> ^random elaboration)}

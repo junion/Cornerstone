@@ -1,32 +1,31 @@
 VERSION 4
-/letsgo/letsgo.dm
+\letsgo\letsgo.dm
 0	ROOT letsgo letsgo 1
-1	0	FOPERATOR _firstload _firstload.soar 2
-2	0	FOLDER all all 3
-3	0	FOLDER elaborations elaborations 4
-4	3	FOPERATOR _all _all.soar 5
-5	3	FOPERATOR action-command action-command.soar 6
-6	3	FOPERATOR top-state top-state.soar 7
-7	0	HLOPERATOR begin-session begin-session.soar begin-session 72 8
-8	7	FOPERATOR elaborations elaborations.soar 9
-9	7	OPERATOR init-help init-help.soar 10
-10	7	OPERATOR opening opening.soar 11
-11	0	OPERATOR canthelp canthelp.soar 12
-12	0	HLOPERATOR grounding-concept grounding-concept.soar grounding-concept 43 13
+1	0	FOPERATOR _firstload _firstload.soar 3
+2	0	FOLDER all all 4
+3	2	OPERATOR wait wait.soar 29
+4	0	FOLDER elaborations elaborations 2
+5	4	FOPERATOR _all _all.soar 5
+6	4	FOPERATOR action-command action-command.soar 28
+7	4	FOPERATOR top-state top-state.soar 6
+8	0	HLOPERATOR begin-session begin-session.soar begin-session 11 8
+9	8	FOPERATOR elaborations elaborations.soar 10
+10	8	OPERATOR init-help init-help.soar 12
+11	8	OPERATOR opening opening.soar 9
+12	0	HLOPERATOR grounding-concept grounding-concept.soar grounding-concept 20 13
 13	12	FOPERATOR elaborations elaborations.soar 14
-14	12	OPERATOR ack ack.soar 15
+14	12	OPERATOR ask ask.soar 15
 15	12	OPERATOR confirm confirm.soar 16
 16	12	OPERATOR request request.soar 17
-17	0	OPERATOR initialize-letsgo initialize-letsgo.soar 18
-18	0	HLOPERATOR provide-info provide-info.soar provide-info 52 19
-19	18	FOPERATOR elaborations elaborations.soar 20
+17	0	OPERATOR initialize-letsgo initialize-letsgo.soar 7
+18	0	HLOPERATOR provide-info provide-info.soar provide-info 31 18
+19	18	FOPERATOR elaborations elaborations.soar 19
 20	18	OPERATOR db-lookup db-lookup.soar 21
 21	18	OPERATOR fail fail.soar 22
-22	18	OPERATOR lookup-message lookup-message.soar 23
-23	18	OPERATOR success success.soar 24
-24	0	HLOPERATOR restart-if-asked restart-if-asked.soar restart-if-asked 65 25
-25	24	FOPERATOR elaborations elaborations.soar 26
-26	24	OPERATOR ask-restart ask-restart.soar 27
-27	24	OPERATOR end-session end-session.soar 28
-28	0	OPERATOR update-concept-score update-concept-score.soar 29
+22	18	OPERATOR lookup-message lookup-message.soar 20
+23	18	OPERATOR success success.soar 23
+24	0	HLOPERATOR restart-if-asked restart-if-asked.soar restart-if-asked 44 24
+25	24	FOPERATOR elaborations elaborations.soar 25
+26	24	OPERATOR ask-restart ask-restart.soar 26
+27	24	OPERATOR end-session end-session.soar 27
 END

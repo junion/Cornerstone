@@ -1,0 +1,12 @@
+sp {letsgo*elaborate*got-required
+   (state <s> ^name letsgo
+              ^user-goal.concept <c1> <c2> <c3>)
+   (<c1> ^name from
+         ^score > 0.9)
+   (<c2> ^name to
+         ^score > 0.9)
+   (<c3> ^name time
+         ^score > 0.9)
+-->
+   (<s> ^got-required true)
+}

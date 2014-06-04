@@ -9,6 +9,7 @@ source begin-session.soar
 pushd begin-session
 source begin-session_source.soar
 popd
+source canthelp.soar
 source grounding-concept.soar
 pushd grounding-concept
 source grounding-concept_source.soar
@@ -22,3 +23,4 @@ source restart-if-asked.soar
 pushd restart-if-asked
 source restart-if-asked_source.soar
 popd
+source update-concept-score.soar

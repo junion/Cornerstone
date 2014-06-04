@@ -1,0 +1,20 @@
+sp {elaborate*state*name
+   (state <s> ^superstate.operator.name <name>)
+-->
+   (<s> ^name <name>)
+}
+
+sp {elaborate*state*top-state
+   (state <s> ^superstate.top-state <ts>)
+-->
+   (<s> ^top-state <ts>)
+}
+
+sp {apply*operator*remove-input
+   (state <s> ^operator <o>
+              ^top-state.io.input-link <il>)
+   (<il> ^<att> <value>)
+-->
+   (<il> ^<att> <value> -)
+   (write <il> |,| <att> |,| <value>)
+}

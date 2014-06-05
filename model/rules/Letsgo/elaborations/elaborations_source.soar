@@ -1,3 +1,4 @@
 source _all.soar
 source action-command.soar
+source concept-update.soar
 source top-state.soar

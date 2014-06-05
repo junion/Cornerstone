@@ -1,0 +1,46 @@
+sp {letsgo*propose*user-opened
+   (state <s> ^io.input-link.events.concept-update <cu>)
+   (<s> -^user-opened)
+-->
+   (<s> ^operator <op> +)
+   (<op> ^name user-opened)
+}
+
+sp {letsgo*apply*user-opened
+   (state <s> ^operator <op>)
+   (<op> ^name user-opened)
+-->
+   (<s> ^user-opened true)
+}
+
+sp {letsgo*propose*concept-update
+   (state <s> ^io.input-link.events.concept-update <cu>)
+-->
+   (<s> ^operator <op> +)
+   (<op> ^name concept-update)
+}
+
+sp {letsgo*apply*concept-update
+   (state <s> ^operator.name concept-update)
+   (<s> ^io.input-link.events.concept-update <cu>)
+   (<cu> ^name <name>)
+   (<s> ^user-goal <ug>)
+   (<ug> ^concept <concept>)
+   (<concept> ^name <name>)
+-->
+   (<s> ^user-goal <ug>)
+   (<ug> ^concept <concept> -)
+   (<ug> ^concept <cu>)
+}
+
+sp {letsgo*select*concept-update
+   (state <s> ^name letsgo
+              ^operator <op1> +
+                        <op2> +)
+   (<op1> ^name user-opened)
+   (<op2> ^name concept-update)
+-->
+   (<s> ^operator <op1> > <op2>)
+}
+
+

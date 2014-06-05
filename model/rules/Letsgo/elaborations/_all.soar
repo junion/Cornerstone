@@ -11,22 +11,12 @@ sp {elaborate*state*top-state
 }
 
 # This doesn't work. Use remove-wme command instead
-sp {apply*operator*remove-input
-   (state <s> ^operator <o>
-              ^top-state.io.input-link <il>)
-   (<il> ^<att> <value>)
--->
-   (<il> ^<att> <value> -)
+#sp {apply*operator*remove-input
+#   (state <s> ^operator <o>
+#              ^top-state.io.input-link <il>)
+#   (<il> ^<att> <value>)
+#-->
+#   (<il> ^<att> <value> -)
 #   (write <il> |,| <att> |,| <value>)
-}
+#}
 
-sp {apply*state*user-opened
-   (state <s> ^io.input-link.events.concept-update <cu>)
-   (<s> ^user-goal.concept <concept>)
-   (<concept> ^name <name>)
-   (<cu> ^name <name>)
--->
-   (<s> ^user-opened true)
-   (<s> ^user-goal.concept <concept> -)
-   (<s> ^user-goal.concept <cu>)   
-}

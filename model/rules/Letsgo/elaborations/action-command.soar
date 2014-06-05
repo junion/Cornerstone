@@ -2,11 +2,22 @@ sp {apply*operator*create-action-command
    (state <s> ^operator <o>
               ^top-state <ts>)
    (<ts> ^io.output-link <ol>)
-   (<o> ^name <name>
+   (<o> ^name { <name> <> wait }
         ^actions <act>)
    (<act> ^<att> <value>)
 -->
    (<ts> ^applied-actions <name>)
+   (<ol> ^<att> <value>)
+}
+
+sp {apply*operator*create-wait-command
+   (state <s> ^operator <o>
+              ^top-state <ts>)
+   (<ts> ^io.output-link <ol>)
+   (<o> ^name wait
+        ^actions <act>)
+   (<act> ^<att> <value>)
+-->
    (<ol> ^<att> <value>)
 }
 

@@ -2,12 +2,13 @@
 
 sp {top-state*propose*wait
    (state <s> ^attribute state
-              ^choices none
-             -^operator.name wait)
+              ^choices none)
+#             -^operator.name wait)
 -->
-   (<s> ^operator <op> +)
+   (<s> ^operator <op>)
    (<op> ^name wait
-         ^actions.wait nil)
+         ^actions.wait <wait>)
+   (<wait> ^act wait)
 }
 
 #   (<s> ^operator <o>)

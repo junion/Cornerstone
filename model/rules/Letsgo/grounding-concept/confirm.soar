@@ -1,0 +1,16 @@
+sp {grounding-concept*propose*confirm
+   (state <s> ^name grounding-concept
+              ^top-state.concept-confirm-thld <th>
+              ^top-state.user-goal.concept <c>)
+   (<s> ^superstate.operator <sop>)
+   (<sop> ^concept <cn>)
+   (<c> ^name <cn>
+        ^top-hyp.score >= <th>
+        ^top-hyp.value <val>)
+-->
+   (<s> ^operator <op> +)
+   (<op> ^name confirm
+         ^actions.speak <speak>)
+   (<speak> ^act confirm
+            ^<cn> <val>)
+}

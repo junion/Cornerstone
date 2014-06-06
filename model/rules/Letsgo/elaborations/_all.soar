@@ -10,6 +10,18 @@ sp {elaborate*state*top-state
    (<s> ^top-state <ts>)
 }
 
+sp {letsgo*select*begin-vs-grounding
+   (state <s> ^name letsgo
+              ^operator <op1> +
+                        <op2> +)
+   (<op1> ^name begin-session)
+   (<op2> ^name grounding-concept)
+-->
+   (<s> ^operator <op1> > <op2>)
+}
+
+
+
 # This doesn't work. Use remove-wme command instead
 #sp {apply*operator*remove-input
 #   (state <s> ^operator <o>

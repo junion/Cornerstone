@@ -1,4 +1,4 @@
-sp {letsgo*propose*init-help
+sp {begin-session*propose*init-help
    (state <s> ^name begin-session 
               ^top-state.applied-actions opening)
 -->

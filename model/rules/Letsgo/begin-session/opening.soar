@@ -1,4 +1,4 @@
-sp {letsgo*propose*opening
+sp {begin-session*propose*opening
    (state <s> ^name begin-session
               ^top-state.io.input-link.events.begin-session)
 -->

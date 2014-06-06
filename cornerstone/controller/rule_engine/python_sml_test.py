@@ -29,7 +29,7 @@ def get_output(agent):
     while True:
 #        print agent.ExecuteCommandLine('print -d 4 i1')
         print agent.RunSelf(1)
-#        print agent.ExecuteCommandLine('print -d 4 i1')
+        print agent.ExecuteCommandLine('print -d 6 s9')
         cmds = get_cmds(agent)
         if cmds:
             break
@@ -54,7 +54,7 @@ def test1():
         cmds = get_output(agent)
         if 'wait' in cmds:
             events = agent.CreateIdWME(input_link_wme, 'events')
-            begin = agent.CreateStringWME(events, 'begin-session', 'nil')
+            agent.CreateStringWME(events, 'begin-session', 'nil')
             agent.Commit()
             break
  
@@ -81,12 +81,16 @@ def test1():
             agent.CreateFloatWME(hyp3, 'score', 0.0)
             agent.Commit()
             break
+    cmds = get_output(agent)
+    agent.DestroyWME(events)
+    agent.Commit()
+    
 
     print agent.ExecuteCommandLine('print -d 4 i2')
+    print agent.ExecuteCommandLine('print -d 4 s1')
+
     cmds = get_output(agent)
-#    agent.DestroyWME(events)
-#    agent.Commit()
-#    
+
     print agent.ExecuteCommandLine('print -d 4 s1')
     
     kernel.DestroyAgent(agent)

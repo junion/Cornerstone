@@ -15,18 +15,17 @@ VERSION 4
 12	9	OPERATOR opening opening.soar 9
 13	0	HLOPERATOR grounding-concept grounding-concept.soar grounding-concept 20 13
 14	13	FOPERATOR elaborations elaborations.soar 14
-15	13	OPERATOR ask ask.soar 15
-16	13	OPERATOR confirm confirm.soar 16
-17	13	OPERATOR request request.soar 17
-18	0	OPERATOR initialize-letsgo initialize-letsgo.soar 7
-19	0	HLOPERATOR provide-info provide-info.soar provide-info 31 18
-20	19	FOPERATOR elaborations elaborations.soar 19
-21	19	OPERATOR db-lookup db-lookup.soar 21
-22	19	OPERATOR fail fail.soar 22
-23	19	OPERATOR lookup-message lookup-message.soar 20
-24	19	OPERATOR success success.soar 23
-25	0	HLOPERATOR restart-if-asked restart-if-asked.soar restart-if-asked 44 24
-26	25	FOPERATOR elaborations elaborations.soar 25
-27	25	OPERATOR ask-restart ask-restart.soar 26
-28	25	OPERATOR end-session end-session.soar 27
+15	13	OPERATOR confirm confirm.soar 16
+16	13	OPERATOR request request.soar 17
+17	0	OPERATOR initialize-letsgo initialize-letsgo.soar 7
+18	0	HLOPERATOR provide-info provide-info.soar provide-info 31 18
+19	18	FOPERATOR elaborations elaborations.soar 19
+20	18	OPERATOR db-lookup db-lookup.soar 21
+21	18	OPERATOR fail fail.soar 22
+22	18	OPERATOR lookup-message lookup-message.soar 20
+23	18	OPERATOR success success.soar 23
+24	0	HLOPERATOR restart-if-asked restart-if-asked.soar restart-if-asked 44 24
+25	24	FOPERATOR elaborations elaborations.soar 25
+26	24	OPERATOR ask-restart ask-restart.soar 26
+27	24	OPERATOR end-session end-session.soar 27
 END

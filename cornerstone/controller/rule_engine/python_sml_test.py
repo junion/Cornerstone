@@ -27,22 +27,33 @@ def get_cmds(agent):
 
 def get_output(agent, matches=False):
     while True:
-        agent.ExecuteCommandLine('run -p 1')
-        print agent.ExecuteCommandLine('print -d 4 i2')
-#         if matches:
-# #             agent.ExecuteCommandLine('run -p 1')
-#             print agent.ExecuteCommandLine('matches --assertions --wmes')
-#             print agent.ExecuteCommandLine('predict')
-#             print agent.ExecuteCommandLine('preferences S1 operator --names')
-#             if isinstance(matches, basestring):
-#                 print 'matches production %s:' % matches
-#                 print agent.ExecuteCommandLine('matches %s' % matches)
-        reprint = agent.RunSelf(1)
-#         print '--------------------------'
-#         print 'watch:'
-#         print reprint
-#         print '--------------------------'
-#         print agent.ExecuteCommandLine('print -d 6 s9')
+        if matches:
+            print 'before input phase------------------'
+            print agent.ExecuteCommandLine('print -d 4 i2')
+            agent.ExecuteCommandLine('run -p 1')
+            print 'before proposal phase------------------'
+            print agent.ExecuteCommandLine('print -d 4 i2')
+            agent.ExecuteCommandLine('run -p 1')
+            print 'before decision phase------------------'
+            print agent.ExecuteCommandLine('matches --assertions --wmes')
+            if isinstance(matches, basestring):
+                print 'matches production %s:' % matches
+                print agent.ExecuteCommandLine('matches %s' % matches)
+            print agent.ExecuteCommandLine('predict')
+            print agent.ExecuteCommandLine('preferences S1 operator --names')
+            agent.ExecuteCommandLine('run -p 1')
+            print 'before apply phase------------------'
+            print agent.ExecuteCommandLine('print -d 4 s1')
+            agent.ExecuteCommandLine('run -p 1')
+            print 'before output phase------------------'
+            print agent.ExecuteCommandLine('print -d 4 i3')
+
+        agent.RunSelf(1)
+
+        if matches:
+            print agent.ExecuteCommandLine('print -d 4 s1')
+            print agent.ExecuteCommandLine('print -d 4 i3')
+
         cmds = get_cmds(agent)
         if cmds:
             break
@@ -107,6 +118,19 @@ def test1():
             hyp3 = agent.CreateIdWME(cu, 'rest-hyp')
             agent.CreateStringWME(hyp3, 'value', '4c')
             agent.CreateFloatWME(hyp3, 'score', 0.01)
+
+            cu = agent.CreateIdWME(events, 'concept-update')
+            agent.CreateStringWME(cu, 'name', 'from')
+            hyp1 = agent.CreateIdWME(cu, 'top-hyp')
+            agent.CreateStringWME(hyp1, 'value', 'cmu')
+            agent.CreateFloatWME(hyp1, 'score', 0.9)
+            hyp2 = agent.CreateIdWME(cu, 'second-hyp')
+            agent.CreateStringWME(hyp2, 'value', 'c')
+            agent.CreateFloatWME(hyp2, 'score', 0.09)
+            hyp3 = agent.CreateIdWME(cu, 'rest-hyp')
+            agent.CreateStringWME(hyp3, 'value', 'm')
+            agent.CreateFloatWME(hyp3, 'score', 0.01)
+
 #             agent.Commit()
 #             kernel.SetAutoCommit(True)
             break
@@ -117,7 +141,8 @@ def test1():
 #     agent.ExecuteCommandLine('pwatch -e letsgo*apply*concept-update')
     
     print 'should see confirm from'
-    cmds = get_output(agent, matches='letsgo*propose*concept-update')
+    cmds = get_output(agent)
+#    cmds = get_output(agent, matches='letsgo*propose*concept-update')
 #     reprint = agent.ExecuteCommandLine('print -d 6 s1')
 #     print reprint
     agent.DestroyWME(events)
@@ -127,7 +152,8 @@ def test1():
 #     print agent.ExecuteCommandLine('print -d 4 i2')
 #     print agent.ExecuteCommandLine('print -d 4 s1')
 
-    cmds = get_output(agent, matches='letsgo*propose*concept-update')
+    cmds = get_output(agent)
+#    cmds = get_output(agent, matches='letsgo*propose*concept-update')
     reprint = agent.ExecuteCommandLine('print -d 6 s1')
     print reprint
 

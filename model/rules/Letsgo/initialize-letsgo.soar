@@ -31,7 +31,7 @@ sp {letsgo*apply*initialize-letsgo
          ^second-hyp <c1-hyp2>
          ^rest-hyp <c1-hyp3>)
    (<c1-hyp1> ^value nil
-              ^score 0.7)
+              ^score 0.0)
    (<c1-hyp2> ^value nil
               ^score 0.0)
    (<c1-hyp3> ^value nil

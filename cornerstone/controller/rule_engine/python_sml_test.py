@@ -25,11 +25,24 @@ def get_cmds(agent):
     return cmds
     
 
-def get_output(agent):
+def get_output(agent, matches=False):
     while True:
-#        print agent.ExecuteCommandLine('print -d 4 i1')
-        print agent.RunSelf(1)
-        print agent.ExecuteCommandLine('print -d 6 s9')
+        agent.ExecuteCommandLine('run -p 1')
+        print agent.ExecuteCommandLine('print -d 4 i2')
+#         if matches:
+# #             agent.ExecuteCommandLine('run -p 1')
+#             print agent.ExecuteCommandLine('matches --assertions --wmes')
+#             print agent.ExecuteCommandLine('predict')
+#             print agent.ExecuteCommandLine('preferences S1 operator --names')
+#             if isinstance(matches, basestring):
+#                 print 'matches production %s:' % matches
+#                 print agent.ExecuteCommandLine('matches %s' % matches)
+        reprint = agent.RunSelf(1)
+#         print '--------------------------'
+#         print 'watch:'
+#         print reprint
+#         print '--------------------------'
+#         print agent.ExecuteCommandLine('print -d 6 s9')
         cmds = get_cmds(agent)
         if cmds:
             break
@@ -39,59 +52,86 @@ def get_output(agent):
 def test1():
     kernel = reapi.create_kernel()
     agent = reapi.create_agent(kernel, "agent")
-    reapi.register_print_callback(kernel, agent,
-                                  reapi.callback_print_message, None)
-    input_link_wme = agent.GetInputLink()
+#     reapi.register_print_callback(kernel, agent,
+#                                   reapi.callback_print_message, None)
     
     # load domain rules
     domain_rule_source = '../../../model/rules/Letsgo.soar'
-    print agent.LoadProductions(domain_rule_source)
-    print agent.ExecuteCommandLine('print')
+    reprint = agent.LoadProductions(domain_rule_source)
+#     print reprint
+#     reprint = agent.ExecuteCommandLine('print')
+#     print reprint
     agent.ExecuteCommandLine('set-stop-phase -Ao')
+
+    # get input link
+    input_link_wme = agent.GetInputLink()
 
     # begin-session
     while True:   
         cmds = get_output(agent)
         if 'wait' in cmds:
+#             kernel.SetAutoCommit(False)
             events = agent.CreateIdWME(input_link_wme, 'events')
             agent.CreateStringWME(events, 'begin-session', 'nil')
-            agent.Commit()
+#             agent.Commit()
+#             kernel.SetAutoCommit(True)
             break
- 
+    print 'should see welcome'
     cmds = get_output(agent)
+#     kernel.SetAutoCommit(False)
     agent.DestroyWME(events)
-    agent.Commit()
+#     agent.Commit()
+#     kernel.SetAutoCommit(True)
 
+    print 'should see init-help'
+    cmds = get_output(agent)
+
+#     reprint = agent.ExecuteCommandLine('print -d 4 s1')
+#     print reprint
+    
     while True:
         cmds = get_output(agent)
         if 'wait' in cmds:
-            print agent.ExecuteCommandLine('print -d 4 s1')
+#             print agent.ExecuteCommandLine('print -d 4 s1')
             input_link_wme = agent.GetInputLink()
+#             kernel.SetAutoCommit(False)
             events = agent.CreateIdWME(input_link_wme, 'events')
             cu = agent.CreateIdWME(events, 'concept-update')
-            agent.CreateStringWME(cu, 'name', 'from')
+            agent.CreateStringWME(cu, 'name', 'route')
             hyp1 = agent.CreateIdWME(cu, 'top-hyp')
-            agent.CreateStringWME(hyp1, 'value', 'cmu')
+            agent.CreateStringWME(hyp1, 'value', '54c')
             agent.CreateFloatWME(hyp1, 'score', 0.7)
             hyp2 = agent.CreateIdWME(cu, 'second-hyp')
-            agent.CreateStringWME(hyp2, 'value', 'none')
-            agent.CreateFloatWME(hyp2, 'score', 0.0)
+            agent.CreateStringWME(hyp2, 'value', '54')
+            agent.CreateFloatWME(hyp2, 'score', 0.09)
             hyp3 = agent.CreateIdWME(cu, 'rest-hyp')
-            agent.CreateStringWME(hyp3, 'value', 'none')
-            agent.CreateFloatWME(hyp3, 'score', 0.0)
-            agent.Commit()
+            agent.CreateStringWME(hyp3, 'value', '4c')
+            agent.CreateFloatWME(hyp3, 'score', 0.01)
+#             agent.Commit()
+#             kernel.SetAutoCommit(True)
             break
-    cmds = get_output(agent)
+
+#     reprint = agent.ExecuteCommandLine('print -d 4 s1')
+#     print reprint
+#     agent.ExecuteCommandLine('pwatch -e letsgo*propose*concept-update')
+#     agent.ExecuteCommandLine('pwatch -e letsgo*apply*concept-update')
+    
+    print 'should see confirm from'
+    cmds = get_output(agent, matches='letsgo*propose*concept-update')
+#     reprint = agent.ExecuteCommandLine('print -d 6 s1')
+#     print reprint
     agent.DestroyWME(events)
     agent.Commit()
     
 
-    print agent.ExecuteCommandLine('print -d 4 i2')
-    print agent.ExecuteCommandLine('print -d 4 s1')
+#     print agent.ExecuteCommandLine('print -d 4 i2')
+#     print agent.ExecuteCommandLine('print -d 4 s1')
 
-    cmds = get_output(agent)
+    cmds = get_output(agent, matches='letsgo*propose*concept-update')
+    reprint = agent.ExecuteCommandLine('print -d 6 s1')
+    print reprint
 
-    print agent.ExecuteCommandLine('print -d 4 s1')
+#     print agent.ExecuteCommandLine('print -d 4 s1')
     
     kernel.DestroyAgent(agent)
     kernel.Shutdown()

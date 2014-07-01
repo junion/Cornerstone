@@ -28,6 +28,9 @@ class Events(collections.MutableSequence):
         self.list.insert(i, v)
 
     def add_event(self, event_type, event):
+        # begin / close
+        # speech (bargein) / execute
+        # config (asr / tts) 
         if event_type not in ['begin', 'speech', 'bargein',
                               'asr_config', 'tts_config',
                               'execute']:

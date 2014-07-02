@@ -2,9 +2,9 @@
 from datetime import datetime
 import logging
 
-from cornerstone.datatypes.events import Events
-from cornerstone.datatypes.execution_output import ExecutionOutputEvent
-from cornerstone.datatypes.speech_input import UserAction, SLUHyp, SpeechInputEvent
+from core.datatypes.events import Events
+from core.datatypes.execution_output import ExecutionOutputEvent
+from core.datatypes.speech_input import UserAction, SLUHyp, SpeechInputEvent
 
 
 

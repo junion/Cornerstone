@@ -13,8 +13,8 @@ from config.global_config import get_config
 
 from session_state import SessionState
 from actuator import Actuator
-from cornerstone.agent import CornerstoneAgent
-from cornerstone.datatypes.events import Events 
+from core.agent import CornerstoneAgent
+from core.datatypes.events import Events 
 
 
 MODULE_ID = 'AgentThread'
@@ -44,7 +44,7 @@ class AgentThread(threading.Thread):
                                                      'eventWaitTimeout')
         # domain
         self.domain = self.config.get(MODULE_ID, 'domain')
-        # create a parser for cornerstone input
+        # create a parser for core input
 #        self.user_input_parser = importlib.import_module(
 #                                    self.domain + 'domain_input_parser')
         self.user_input_parser = __import__(
@@ -81,7 +81,7 @@ class AgentThread(threading.Thread):
                 # call the agent with the input and get output events
                 out_events = self.agent.run(in_events)
                 self.app_logger.info('Out event: %s' % str(out_events))
-                # convert the cornerstone output to a galaxy frame
+                # convert the core output to a galaxy frame
                 self.actuator.execute(self.session_state, out_events)
                 self.app_logger.info('Execution done')
             except Exception:
@@ -130,13 +130,13 @@ class AgentThread(threading.Thread):
         
         Key variables:
         self.session_state -- maintain session state
-        self.agent -- the cornerstone agent
+        self.agent -- the core agent
         events -- a collection of events from the frame 
         '''
         self.app_logger.info('begin_session')
         # create a session state
         self.session_state = SessionState(self.session_id)
-        # create a cornerstone agent
+        # create a core agent
         self.agent = CornerstoneAgent()
         # store session begin time
         self.session_state.session_start_time = time.time()
@@ -149,7 +149,7 @@ class AgentThread(threading.Thread):
         self.app_logger.info('user_utterance_end')
         # store the latest user action time
         self.session_state.last_input_time = time.time()
-        # convert the galaxy frame to cornerstone input
+        # convert the galaxy frame to core input
         speech_input = self.user_input_parser.parse(self.session_state,
                                                     self.actuator, frame)
         # append the parsed results to the history of input hypotheses 

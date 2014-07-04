@@ -16,7 +16,7 @@ class ConceptBeliefState(object):
                 del self._items['None']
         else:
             self._items = {}
-        self._items = self._normalize()
+        self.normalize()
         self._nbest = None
         self._sorted = False
 
@@ -32,20 +32,22 @@ class ConceptBeliefState(object):
     def __setitem__(self, item, prob):
         if prob < 0.0:
             raise ValueError
+        if prob < 1e-6:
+            return
         self._items[item] = prob
-        self._normalize()
-        self._sorted = False
+#         self._normalize()
+#         self._sorted = False
         
-    def __delitem__(self, item):
-        del self._items[item]
-        self._normalize()
-        self._sorted = False
+#     def __delitem__(self, item):
+#         del self._items[item]
+#         self._normalize()
+#         self._sorted = False
 
     def __str__(self):
-        return "<%s>" % " ".join(["%s: %.2f" % (item, prob)
+        return "%s" % ", ".join(["%s: %.2f" % (item, prob)
                                   for item, prob in self._get_nbest()])
         
-    def _normalize(self):
+    def normalize(self):
         if 'None' in self._items:
             del self._items['None']
         total = sum(self._items.values())
@@ -53,6 +55,13 @@ class ConceptBeliefState(object):
         total += self._items['None']
         for item in self._items:
             self._items[item] /= total
+        del_list = []
+        for item in self._items:
+            if item != 'None' and self._items[item] < 1e-6:
+                del_list.append(item)
+        for item in del_list:
+            del self._items[item]
+        return self
 
     def _get_nbest(self):
         if not self._sorted:

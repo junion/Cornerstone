@@ -7,8 +7,12 @@ Created on Jul 2, 2014
 from collections import defaultdict
 from pprint import pformat, pprint
 
+speech_act_types = ['inform', 'request', 'confirm', 'affirm', 'negate',
+                    'canthelp']
+
 class SpeechAct(object):
     def __init__(self, act_type=None, concept_values=None):
+        assert act_type in speech_act_types
         self.act_type = act_type
         self.concept_values = concept_values
 
@@ -26,7 +30,13 @@ class SpeechAct(object):
         for (c, v) in self.concept_values:
             if c == concept:
                 yield v
-        
+
+    def get_concepts(self):
+        concepts = set()
+        for (c, v) in self.concept_values:
+            concepts.add(c)
+        return concepts
+                
     def serialize_args(self):
         return '&'.join([str(self.concept_values[k]) 
                          for k in sorted(self.concept_values.keys())])
@@ -101,16 +111,29 @@ class SpeechNbest(object):
         self.nbest.insert(i, (s_turn, score))
         return self
 
+    def get_concepts(self, max_best=5):
+        concepts = set()
+        for s_turn, score in self.nbest[:max_best]:
+            for s_act in s_turn:
+                concepts = concepts.union(s_act.get_concepts())
+        return concepts
+        
     def marginal(self, act_type, concept=None, max_best=5):
+        assert act_type in speech_act_types
         concept_score = defaultdict(float)
         for s_turn, score in self.nbest[:max_best]:
             for s_act in s_turn:
                 if s_act.act_type == act_type:
+                    # LIMIT: currently assume that 
+                    # affirm and negate don't have arguments
+                    if act_type in ['affirm', 'negate']:
+                        concept_score[None] += score
+                        continue
                     if not (concept or s_act.concept_values):
                         concept_score[None] += score
                         continue
-                    for value in s_act.get_concept_values(concept):
-                        concept_score[value] += score
+                    for item in s_act.get_concept_values(concept):
+                        concept_score[item] += score
         return sorted(concept_score.items(), key=lambda x: x[1],
                       reverse=True)
         
@@ -145,3 +168,4 @@ if __name__ == '__main__':
     pprint(nbest.marginal('inform', 'to'))
     pprint(nbest.marginal('inform', 'time'))
     pprint(nbest.marginal('negate'))
+    print nbest.get_concepts()

@@ -8,8 +8,8 @@ import logging
 
 from config.global_config import get_config
 import rule_engine.rule_engine_api as reapi
-from core.datatypes.event_list import Events
-from core.datatypes.speech_output import SpeechOutputEvent
+from core.datatypes.event_list import EventList
+from core.datatypes.speech_output import SpeechEvent
 from core.datatypes.asr_config_output import ASRConfigOutputEvent
 from core.datatypes.tts_config_output import TTSConfigOutputEvent
 

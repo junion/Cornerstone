@@ -37,6 +37,11 @@ class EventList(collections.MutableSequence):
             raise RuntimeError('Invalid event type')
         self.list.append({'event_type': event_type, 'event': event})
 
+    def get_events(self, event_type):
+        for item in self.list:
+            if item['event_type'] == event_type:
+                yield item['event']
+
     def __str__(self):
         return '\n'.join([str(event) 
                           for event in self.list])

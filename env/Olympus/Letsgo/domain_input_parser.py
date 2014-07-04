@@ -2,9 +2,9 @@
 from datetime import datetime
 import logging
 
-from core.datatypes.events import Events
+from core.datatypes.event_list import Events
 from core.datatypes.execution_output import ExecutionOutputEvent
-from core.datatypes.speech_input import UserAction, SLUHyp, SpeechInputEvent
+from core.datatypes.speech_event import UserAction, SLUHyp, SpeechInputEvent
 
 
 
@@ -310,7 +310,7 @@ def speech_input_next_bus(state, actuator, frame):
     if frame[':properties'].has_key(':[4_busafterthatrequest]'):
         system_act = state.history_system_acts[-1]
         if (system_act.act_type == 'example' and 
-            system_act.act_args['act'] == 'nextquery'):
+            system_act.concepts['act'] == 'nextquery'):
             state.next_query = 'nextbus'
             return (UserAction('nextbus', {}))
     return None
@@ -320,7 +320,7 @@ def speech_input_previous_bus(state, actuator, frame):
     if frame[':properties'].has_key(':[4_busbeforethatrequest]'):
         system_act = state.history_system_acts[-1]
         if (system_act.act_type == 'example' and 
-                system_act.act_args['act'] == 'nextquery'):
+                system_act.concepts['act'] == 'nextquery'):
             state.next_query = 'prevbus' 
             return (UserAction('prevbus', {}))
     return None
@@ -330,7 +330,7 @@ def speech_input_quit(state, actuator, frame):
     if frame[':properties'].has_key(':[generic.quit]'):
         system_act = state.history_system_acts[-1]
         if (system_act.act_type == 'example' and 
-                system_act.act_args['act'] == 'nextquery' or
+                system_act.concepts['act'] == 'nextquery' or
                 system_act.act_type == 'canthelp.no_connection'):
             state.next_query = 'bye' 
             return (UserAction('bye', {}))
@@ -342,7 +342,7 @@ def speech_input_startover(state, actuator, frame):
     if frame[':properties'].has_key(':[generic.startover]'):
         system_act = state.history_system_acts[-1]
         if (system_act.act_type == 'example' and 
-                system_act.act_args['act'] == 'nextquery' or
+                system_act.concepts['act'] == 'nextquery' or
                 system_act.act_type == 'canthelp.no_connection'):
             state.next_query = 'restart' 
             return (UserAction('restart', {}))

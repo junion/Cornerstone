@@ -6,7 +6,7 @@ Created on Jul 1, 2014
 
 import copy
 
-class NbestList(object):
+class ConceptBeliefState(object):
     """Nbest list"""
 
     def __init__(self, items=None, prob_dist=True):

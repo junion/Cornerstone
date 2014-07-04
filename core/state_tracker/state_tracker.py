@@ -7,7 +7,7 @@ Created on Jul 1, 2014
 import logging
 
 from config.global_config import get_config
-from core.datatypes.events import Events
+from core.datatypes.event_list import Events
 
 
 MODULE_ID = 'StateTracker'
@@ -22,8 +22,10 @@ class StateTracker(object):
         self.config = get_config()
         # logging
         self.app_logger = logging.getLogger(MODULE_ID)
+        # concept list
+        self._concept_list = {}
+        self.app_logger.info('State tracker created')
 
-        self.app_logger.info('Controller created')
-
-    def state_update(self, in_events):
+    def state_update(self, state, in_events):
+        
         pass

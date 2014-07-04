@@ -14,7 +14,7 @@ from config.global_config import get_config
 from session_state import SessionState
 from actuator import Actuator
 from core.agent import CornerstoneAgent
-from core.datatypes.events import Events 
+from core.datatypes.event_list import Events 
 
 
 MODULE_ID = 'AgentThread'

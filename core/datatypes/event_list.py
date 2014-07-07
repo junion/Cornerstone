@@ -24,6 +24,9 @@ class EventList(collections.MutableSequence):
     def __setitem__(self, i, v):
         self.list[i] = v
 
+    def empty(self):
+        return len(self.list) == 0
+    
     def insert(self, i, v):
         self.list.insert(i, v)
 
@@ -33,15 +36,17 @@ class EventList(collections.MutableSequence):
         # execute:
         # config: asr / tts 
         if event_type not in ['session', 'speech', 'config',
-                              'execute']:
-            raise RuntimeError('Invalid event type')
+                              'state', 'turn', 'execute']:
+            raise RuntimeError('Invalid event type: %s' % event_type)
         self.list.append({'event_type': event_type, 'event': event})
 
     def get_events(self, event_type):
+        requested_list = []
         for item in self.list:
             if item['event_type'] == event_type:
-                yield item['event']
+                requested_list.append(item['event'])
+        return requested_list
 
     def __str__(self):
-        return '\n'.join([str(event) 
+        return '\n'.join([event['event_type'] + ': ' + str(event['event']) 
                           for event in self.list])

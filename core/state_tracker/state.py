@@ -6,6 +6,12 @@ Created on Jul 2, 2014
 
 class State(object):
     def __init__(self):
+        # new inbound events
+        self.new_events = None
+        # event history
+        self.in_event_history = []
+        # session status
+        self.session_status = None
         # concepts to track
         self.concepts = {}
         # last speech outbound event
@@ -23,18 +29,3 @@ class State(object):
         state_str.append(']')    
         return '\n'.join(state_str)
     
-    def update(self, item, value):
-        assert item in self.state
-
-        state_item = self.state[item]
-        if type(state_item) is list:
-            state_item.extend(value)
-        else:
-            self.state[item] = value
-
-    def __setitem__(self, concept, value):
-        self.state[concept] = value
-
-    def __getitem__(self, concept):
-        return self.state[concept]
-

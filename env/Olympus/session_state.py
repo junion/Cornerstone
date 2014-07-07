@@ -24,7 +24,6 @@ class SessionState(object):
         self.utt_count = 0
         self.turn_number = 0
         self.notify_prompts = []
-
         self.reset()
         
         #=======================================================================
@@ -34,7 +33,6 @@ class SessionState(object):
 #        self.discontinued_route = {}
 #        self.uncovered_from = {}
 #        self.uncovered_to = {}
-
         
     def reset(self):
         self.last_event_type = None
@@ -42,13 +40,13 @@ class SessionState(object):
         self.last_output_end_time = None
         self.last_output_status = None
         self.bargein = False
-        
         self.history_system_acts = []
         self.history_input_hyps = []
-        
         self.system_acts_current_turn = []
-        self.input_hyps_current_turn=  []
-        
+        self.input_hyps_current_turn = []
+        self.asr_config = None
+        self.turn_yield = False
+        self.last_speech_out_event = None
 #        self.belief_state = BeliefState()
 #        self.init_plan_execution_state()
         

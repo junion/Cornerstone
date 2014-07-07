@@ -3,13 +3,26 @@ sp {grounding-concept*propose*request
               ^top-state.concept-confirm-thld <th>
               ^top-state.user-goal.concept <c>)
    (<s> ^superstate.operator <sop>)
+#   (<sop> ^concept { <> route <cn> })
    (<sop> ^concept <cn>)
    (<c> ^name <cn>
+        ^nlg-obj <obj>
         ^top-hyp.score < <th>)
 -->
    (<s> ^operator <op> +)
    (<op> ^name request
-         ^actions.speak <speak>)
-   (<speak> ^act request
-            ^<cn> nil)
+         ^actions <act>)
+   (<act> ^speech <speech>
+          ^config <nlg>
+          ^config <asr>
+          ^turn <turn>)
+   (<speech> ^act_type request
+             ^<cn> nil)
+   (<nlg> ^module NLG
+          ^act request
+          ^object <obj>)
+   (<asr> ^module ASR
+          ^set_dtmf_len 1
+          ^set_lm place)
+   (<turn> ^yield true)
 }

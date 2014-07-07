@@ -26,9 +26,9 @@ def create_kernel():
 	return kernel
 
 def create_agent(kernel, name):
-	agent = kernel.CreateAgent("agent")
+	agent = kernel.CreateAgent("re_agent")
 	if not agent:
-		print("Error creating agent: " + kernel.GetLastErrorDescription())
+		print("Error creating re_agent: " + kernel.GetLastErrorDescription())
 		exit(1)
 	return agent
 
@@ -38,7 +38,7 @@ def cli(agent):
 	cmd = raw_input("soar> ")
 	while cmd not in ("exit", "quit"):
 		if cmd:
-			print(agent.ExecuteCommandLine(cmd).strip())
+			print(re_agent.ExecuteCommandLine(cmd).strip())
 		cmd = raw_input("soar> ")
 
 def parameterize_commands(param_map, commands):
@@ -168,7 +168,7 @@ def make_branch(branch):
 
 if __name__ == "__main__":
 	kernel = create_kernel()
-	agent = create_agent(kernel, "agent")
+	agent = create_agent(kernel, "re_agent")
 	register_print_callback(kernel, agent, callback_print_message, None)
 	for source in sys.argv[1:]:
 		print(agent.ExecuteCommandLine("source " + source))

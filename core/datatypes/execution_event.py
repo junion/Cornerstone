@@ -1,6 +1,10 @@
+'''
+Created on Jul 4, 2014
 
+@author: Sungjin Lee
+'''
 
-class ExecutionOutputEvent(object):
+class ExecutionEvent(object):
     def __init__(self, asr_config):
         self.asr_config = asr_config
 

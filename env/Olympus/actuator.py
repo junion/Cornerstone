@@ -53,22 +53,30 @@ class Actuator(object):
         
     def execute(self, state, events):
         speech_event = None
-        asr_config_event = None
-        tts_config_event = None
+        nlg_config = None
+        tts_config = None
         execute_event = None
         for event in events:
             if event['event_type'] == 'speech':
                 speech_event = event['event']
-            elif event['event_type'] == 'asr_config':
-                asr_config_event = event['event']
-            elif event['event_type'] == 'tts_config':
-                tts_config_event = event['event']
+            elif (event['event_type'] == 'config' and 
+                  event['event'].module == 'NLG'):
+                nlg_config = event['event'].config
+            elif (event['event_type'] == 'config' and 
+                  event['event'].module == 'TTS'):
+                tts_config = event['event'].config
+            elif (event['event_type'] == 'config' and 
+                  event['event'].module == 'ASR'):
+                state.asr_config = event['event'].config
+            elif event['event_type'] == 'turn':
+                state.turn_yield = (True if event['event'].args['yield'] 
+                                    == 'true' else False)
             elif event['event_type'] == 'execute':
                 execute_event = event['event']
         if speech_event:
             self._send_system_utterance_message(
-                    state, speech_event,
-                    asr_config_event, tts_config_event)
+                    state, nlg_config, tts_config)
+            state.last_speech_out_event = speech_event
         elif execute_event:
             if execute_event['operation'] == 'place_query':
                 self._send_place_query_message(
@@ -107,16 +115,20 @@ class Actuator(object):
         content = content.replace('${turn_number}', str(state.turn_number))
         content = content.replace('${notify_prompts}', 
                                   ' '.join(state.notify_prompts))
-        if len(state.history_system_acts) > 0:
+        if state.asr_config:
+            asr_config_str = []
+            for key in state.asr_config.keys():
+                asr_config_str.append(key+' = '+
+                                      state.asr_config[key])
+            self.app_logger.info(', '.join(asr_config_str))
             content = content.replace(
                             '${input_line_config}', 
-                            state.history_system_acts[-1].asr_config)
+                            ', '.join(asr_config_str))
         else:
             content = content.replace('${input_line_config}', '')
         return content
 
-    def _send_system_utterance_message(self, state, speech_event, 
-                                       asr_config_event, tts_config_event):
+    def _send_system_utterance_message(self, state, nlg_config, tts_config):
         content = system_utterance_frame_template
         content = content.replace('${sess_id}', state.session_id)
         content = content.replace('${id_suffix}', '%03d'%state.id_suffix)
@@ -126,27 +138,37 @@ class Actuator(object):
         content = content.replace('${dialog_state}', 
                                   self._compose_dialog_state(state))
         content = content.replace('${dialog_act}', 
-                                  speech_event.nlg_args['type'])
-        content = content.replace('${object}', 
-                                  speech_event.nlg_args['object'])
-        if speech_event.act_type == 'request':
+                                  nlg_config['act'])
+        content = content.replace('${object}', nlg_config['object'].replace('-', '.'))
+#         if nlg_config['act'] == 'request':
+#             floor_state = 'user'
+#         elif nlg_config['act'] == 'inform':
+#             floor_state = 'free'
+#         else: 
+#             floor_state = 'free'
+        if state.turn_yield:
             floor_state = 'user'
-        elif speech_event.act_type == 'inform':
-            floor_state = 'free'
         else: 
             floor_state = 'free'
         content = content.replace('${final_floor_status}', floor_state)
         query = result = version = ''
-        if 'query' in speech_event.nlg_args['args']:
-            query = speech_event.nlg_args['args']['query']
-        if 'result' in speech_event.nlg_args['args']:
-            result = speech_event.nlg_args['args']['result']
-        if 'version' in speech_event.nlg_args['args']:
-            version = speech_event.nlg_args['args']['version']
+        if 'query' in nlg_config:
+            query = nlg_config['query']
+        if 'result' in nlg_config:
+            result = nlg_config['result']
+        if 'version' in nlg_config:
+            version = nlg_config['version']
         content = content.replace('${nlg_args}', 
                                   ''.join([query, result, version]))
-        content = content.replace('${tts_config}', 
-                                  tts_config_event.tts_config)
+#         content = content.replace('${tts_config}', 
+#                                   tts_config_event.configs)
+        tts_config_str = []
+        if tts_config:
+            for key in tts_config.keys():
+                tts_config_str.append('   :'+key+' "'+
+                                      tts_config[key]+'"\n')
+        content = content.replace('${tts_config}', ''.join(tts_config_str))
+        self.app_logger.info(''.join(tts_config_str))
         message = {'type':'GALAXYACTIONCALL',
                    'content':content}
         state.notify_prompts.append(str(state.utt_count))

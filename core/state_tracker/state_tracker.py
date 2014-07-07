@@ -21,15 +21,31 @@ class StateTracker(object):
         self.app_logger = logging.getLogger(MODULE_ID)
         self.app_logger.info('State tracker created')
 
-    def state_update(self, state, in_events):
+    def update_state(self, state, in_events):
+        if state.new_events:
+            state.in_event_history.append(state.new_events)
+        state.new_events = in_events
+        self.update_session_state(state, in_events)
+        self.update_belief_state(state, in_events)
+        
+    def update_session_state(self, state, in_events):
+        for event in in_events.get_events('session'):
+            state.session_status = event.status
+        
+    def update_belief_state(self, state, in_events):
         raise NotImplementedError
+    
+    def update_last_out_events(self, state, out_events):
+        # LIMIT: currently assume that 
+        # the system makes only a speech out event
+        state.last_speech_out_event = out_events.get_events('speech')[0]
 
 
-class SimpleRuleTracker(StateTracker):
+class SimpleRuleStateTracker(StateTracker):
     def __init__(self):
         StateTracker.__init__(self)
 
-    def state_update(self, state, in_events):
+    def update_belief_state(self, state, in_events):
         for event in in_events.get_events('speech'):
             in_nbest = event.speech_nbest
             in_concepts = in_nbest.get_concepts()
@@ -75,16 +91,14 @@ class SimpleRuleTracker(StateTracker):
                 
 
 if __name__ == '__main__':
-    from pprint import pprint
-    
     from core.state_tracker.state import State
     from core.datatypes.speech_event import (
          SpeechEvent, SpeechNbest, SpeechTurn, SpeechAct)
     from core.datatypes.event_list import EventList
     
+    # create state
     state = State()
     print state
-
     # speech out event
     nbest = SpeechNbest()
     t = SpeechTurn()
@@ -92,10 +106,8 @@ if __name__ == '__main__':
     nbest.append(t, 1.0)
 #     print nbest
     out_event = SpeechEvent(nbest)
-    
     # last speech out event
     state.last_speech_out_event = out_event
-    
     # speech in event
     nbest = SpeechNbest()
     t = SpeechTurn()
@@ -116,8 +128,7 @@ if __name__ == '__main__':
     in_event = SpeechEvent(nbest)
     in_events = EventList()
     in_events.add_event('speech', in_event)
-    
     # state tracker
-    sr_tracker = SimpleRuleTracker()
-    sr_tracker.state_update(state, in_events)
+    sr_tracker = SimpleRuleStateTracker()
+    sr_tracker.update_belief_state(state, in_events)
     print state

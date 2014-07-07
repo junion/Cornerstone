@@ -1,12 +1,14 @@
 '''
+Created on Jul 4, 2014
 
+@author: Sungjin Lee
 '''
 
 import threading
 import traceback
 import time
 import logging
-#import importlib
+import importlib
 from copy import deepcopy
 
 from config.global_config import get_config
@@ -14,7 +16,9 @@ from config.global_config import get_config
 from session_state import SessionState
 from actuator import Actuator
 from core.agent import CornerstoneAgent
-from core.datatypes.event_list import Events 
+from core.datatypes.event_list import EventList
+from core.datatypes.session_event import SessionEvent
+from core.datatypes.state_event import StateEvent
 
 
 MODULE_ID = 'AgentThread'
@@ -45,14 +49,12 @@ class AgentThread(threading.Thread):
         # domain
         self.domain = self.config.get(MODULE_ID, 'domain')
         # create a parser for core input
-#        self.user_input_parser = importlib.import_module(
-#                                    self.domain + 'domain_input_parser')
-        self.user_input_parser = __import__(
+        self.user_input_parser = importlib.import_module(
                                     self.domain + '.domain_input_parser')
-        
+#         self.user_input_parser = __import__(
+#                                     self.domain + '.domain_input_parser')
         self.app_logger.info('Agent thread %s created'%self.getName())
 
-        
     #=======================================================================
     # main loop
     #=======================================================================
@@ -75,22 +77,37 @@ class AgentThread(threading.Thread):
                     self.app_logger.info('Warning: null frame')
                     continue
                 # handle Olympus events
-                in_events = Events()
-                self.app_logger.info('New event: %s' % str(in_events)) 
+                in_events = EventList()
+#                 self.app_logger.info('New event: %s' % str(in_events)) 
                 self._update_state_for_event(frame, in_events)
-                # call the agent with the input and get output events
-                out_events = self.agent.run(in_events)
-                self.app_logger.info('Out event: %s' % str(out_events))
-                # convert the core output to a galaxy frame
-                self.actuator.execute(self.session_state, out_events)
+                if self._take_turn():
+                    # call the agent with the input and get output events
+                    out_events = self.agent.run(in_events)
+    #                 self.app_logger.info('Out event: %s' % str(out_events))
+                    # convert the core output to a galaxy frame
+                    self.actuator.execute(self.session_state, out_events)
                 self.app_logger.info('Execution done')
+                self.actuator.send_wait_event_message()
             except Exception:
                 self.app_logger.info('Try to recover from crash:')
                 self.app_logger.error(traceback.format_exc())
 #                email_log.send_mail('Exception!',traceback.format_exc())
                 self.dialog_controller.restart_interaction()
 
-                
+    def _take_turn(self):
+        if self.session_state.last_event_type == None:
+            return True
+        if self.session_state.last_event_type == 'begin_session':
+            return True
+        if self.session_state.last_event_type == 'user_utterance_end':
+            return True
+        if self.session_state.last_event_type == 'turn_timeout':
+            return True
+        if self.session_state.last_event_type == 'system_utterance_end':
+            if not self.session_state.turn_yield:
+                return True
+        return False
+
     # update dialog state by incorporating the input frame        
     def _update_state_for_event(self, frame, events):
         # call event handlers
@@ -99,7 +116,7 @@ class AgentThread(threading.Thread):
             self._begin_session_handler(frame, events)
         elif frame.name == 'DialogManager.handle_event':
             event_type = frame[':event_type']
-            self.self.app_logger.info('event_type: %s'%event_type)
+            self.app_logger.info('\nevent_type: %s' % event_type)
             if event_type == 'user_utterance_end':
                 self._user_utterance_end_handler(frame, events)
             elif event_type == 'system_utterance_start':
@@ -121,7 +138,6 @@ class AgentThread(threading.Thread):
         # so we don't need to reference the frame later
         self.session_state.last_event_type = event_type
         
-        
     #=========================================================================
     # Event handlers
     #=========================================================================
@@ -130,47 +146,44 @@ class AgentThread(threading.Thread):
         
         Key variables:
         self.session_state -- maintain session state
-        self.agent -- the core agent
+        self.re_agent -- the core re_agent
         events -- a collection of events from the frame 
         '''
-        self.app_logger.info('begin_session')
+        self.app_logger.info('\nbegin_session')
         # create a session state
         self.session_state = SessionState(self.session_id)
-        # create a core agent
+        # create a core re_agent
         self.agent = CornerstoneAgent()
         # store session begin time
         self.session_state.session_start_time = time.time()
         # add an event
-        events.add_event('begin', None)
-                
+        events.add_event('session', SessionEvent('begin'))
                 
     def _user_utterance_end_handler(self, frame, events):
         '''Parse the user utterance. Add a speech event.'''
-        self.app_logger.info('user_utterance_end')
+        self.app_logger.info('\nuser_utterance_end')
         # store the latest user action time
         self.session_state.last_input_time = time.time()
         # convert the galaxy frame to core input
-        speech_input = self.user_input_parser.parse(self.session_state,
+        in_speech_event = self.user_input_parser.parse(self.session_state,
                                                     self.actuator, frame)
         # append the parsed results to the history of input hypotheses 
         # in the dialog state.
-        self.session_state.history_input_hyps.append(speech_input)
+        self.session_state.history_input_hyps.append(in_speech_event)
         # append the parsed results to the list of input hypotheses 
         # for the current turn.
         self.session_state.input_hyps_current_turn.append(
             self.session_state.history_input_hyps[-1])
         # add an event
-        events.add_event('speech', speech_input)
+        events.add_event('speech', in_speech_event)
         
-                
     def _system_utterance_start_handler(self, frame, events):
-        self.app_logger.info('system_utterance_start(%s) %s' % 
+        self.app_logger.info('\nsystem_utterance_start(%s) %s' % 
                              (frame[':properties'][':utt_count'],
                               frame[':properties'][':tagged_prompt']))
         self.session_state.last_output_start_time = time.time()
         self.session_state.last_output_status = 'start'
         self.session_state.bargein = False
-        
         
     def _system_utterance_end_handler(self, frame, events):
         self.app_logger.info('system_utterance_end(%s)' % 
@@ -186,10 +199,11 @@ class AgentThread(threading.Thread):
                 self.session_state.notify_prompts):
             self.session_state.notify_prompts.remove(
                             frame[':properties'][':utt_count'])
-
+        # add an event
+        events.add_event('state', StateEvent('speech-completed', {}))
 
     def _system_utterance_canceled_handler(self, frame, events):
-        self.app_logger.info('system_utterance_canceled(%s)' % 
+        self.app_logger.info('\nsystem_utterance_canceled(%s)' % 
                              frame[':properties'][':utt_count'])
         self.session_state.last_output_end_time = time.time()
         self.session_state.last_output_status = 'canceled'
@@ -199,24 +213,22 @@ class AgentThread(threading.Thread):
             self.session_state.bargein = True
             self.app_logger.info('Barge in detected at %s' % 
                                  frame[':properties'][':tagged_prompt'])
-
+        # add an event
+        events.add_event('speech', StateEvent('speech-completed', {}))
 
     def _session_state_change_handler(self, frame, events):
-        self.app_logger.info('session_state_change')
+        self.app_logger.info('\nbroadcast_dialog_state')
         # broadcast dialog state
-        self.actuator.broadcast_session_state(self.session_state)
-
+        self.actuator.broadcast_dialog_state(self.session_state)
 
     def _turn_timeout_handler(self, frame, events):
-        self.app_logger.info('turn_timeout')
-
+        self.app_logger.info('\nturn_timeout')
 
     def _unknown_event_handler(self, frame, events):
-        self.app_logger.info('Unknow event')
-
+        self.app_logger.info('\nUnknow event')
 
     def _end_session_handler(self, frame, events):
-        self.app_logger.info('end_session')
+        self.app_logger.info('\nend_session')
         # respond to end session message (should we?)
         self.actuator.reply_end_session()
         self.continue_dialog = False

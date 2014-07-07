@@ -2,12 +2,13 @@ sp {letsgo*propose*grounding-concept
    (state <s> ^name letsgo
               ^concept-accept-thld <th>
               ^user-goal.concept <c>)
-   (<c> ^top-hyp.score < <th>
+   (<c> ^top-hyp.score { < <th> <sc> }
         ^name <cn>)
 -->
    (<s> ^operator <op> +)
    (<op> ^name grounding-concept
-         ^concept <cn>)
+         ^concept <cn>
+         ^top-score <sc>)
 }
 
 sp {letsgo*select*grounding-concepts
@@ -23,4 +24,15 @@ sp {letsgo*select*grounding-concepts
          ^<cn2> { <p2> > <p1> })
 -->
    (<s> ^operator <op1> > <op2>)
+}
+
+sp {letsgo*select*reject-route-date-request
+   (state <s> ^name letsgo
+              ^operator <op> +
+              ^concept-confirm-thld <th>)
+   (<op> ^name grounding-concept
+         ^concept << route date >>
+         ^top-score < <th>)
+-->
+   (<s> ^operator <op> -)
 }

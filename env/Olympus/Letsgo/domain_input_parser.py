@@ -1,12 +1,16 @@
+'''
+Created on Jul 4, 2014
+
+@author: Sungjin Lee
+'''
 
 from datetime import datetime
 import logging
 
-from core.datatypes.event_list import Events
-from core.datatypes.execution_output import ExecutionOutputEvent
-from core.datatypes.speech_event import UserAction, SLUHyp, SpeechInputEvent
-
-
+from core.datatypes.event_list import EventList
+from core.datatypes.speech_event import (
+     SpeechEvent, SpeechNbest, SpeechTurn, SpeechAct)
+from core.datatypes.execution_event import ExecutionEvent
 
 app_logger = logging.getLogger('DomainInputParser')
 
@@ -17,32 +21,32 @@ app_logger = logging.getLogger('DomainInputParser')
 #=============================================================================
 def dtmf_input_help(state, actuator, frame):
     if frame[':properties'].has_key(':[dtmf_key.dtmf_zero]'):
-        return (UserAction('request', {'help': None}))
+        return (SpeechAct('request', [('help', None)]))
     return None
 
 def dtmf_input_affirm(state, actuator, frame):
     if frame[':properties'].has_key(':[dtmf_key.dtmf_one]'):
-        return (UserAction('affirm', None))
+        return (SpeechAct('affirm', []))
     return None
 
 def dtmf_input_negate(state, actuator, frame):
     if frame[':properties'].has_key(':[dtmf_key.dtmf_three]'):
-        return (UserAction('negate', None))
+        return (SpeechAct('negate', []))
     return None
 
 def dtmf_input_eval_success(state, actuator, frame):
     if frame[':properties'].has_key(':[dtmf_key.dtmf_four]'):
-        return (UserAction('evaluate', {'success': None}))
+        return (SpeechAct('evaluate', [('success', None)]))
     return None
 
 def dtmf_input_eval_fail(state, actuator, frame):
     if frame[':properties'].has_key(':[dtmf_key.dtmf_six]'):
-        return (UserAction('evaluate', {'fail': None}))
+        return (SpeechAct('evaluate', [('fail', None)]))
     return None
 
 def speech_input_help(state, actuator, frame):
     if frame[':properties'].has_key(':[generic.help.general_help]'):
-        return (UserAction('request', {'help': None}))
+        return (SpeechAct('request', [('help', None)]))
     return None
 
 
@@ -78,10 +82,10 @@ def speech_input_uncovered_from_desc(state, actuator, frame):
                 state, 
                 frame[':properties'][':[1_singleplace.stop_name.covered_place]'], 
                 frame[':properties'][':parse_str'])
-            return (UserAction(
+            return (SpeechAct(
                         'inform',
-                        {'from.desc':
-                         frame[':properties'][':[1_singleplace.stop_name.uncovered_place]']}))
+                        [('from.desc',
+                         frame[':properties'][':[1_singleplace.stop_name.uncovered_place]'])]))
     elif frame[':properties'].has_key(':[2_departureplace.stop_name.uncovered_place]'):
         _register_uncovered_place(
             state, 
@@ -90,10 +94,10 @@ def speech_input_uncovered_from_desc(state, actuator, frame):
             state, 
             frame[':properties'][':[2_departureplace.stop_name.uncovered_place]'], 
             frame[':properties'][':parse_str'])
-        return (UserAction(
+        return (SpeechAct(
                     'inform', 
-                    {'from.desc': 
-                     frame[':properties'][':[2_departureplace.stop_name.uncovered_place]']}))
+                    [('from.desc', 
+                     frame[':properties'][':[2_departureplace.stop_name.uncovered_place]'])]))
     return None
 
 
@@ -112,10 +116,10 @@ def speech_input_uncovered_to_desc(state, actuator, frame):
                 state, 
                 frame[':properties'][':[1_singleplace.stop_name.covered_place]'], 
                 frame[':properties'][':parse_str'])
-            return (UserAction(
+            return (SpeechAct(
                         'inform', 
-                        {'to.desc': 
-                         frame[':properties'][':[1_singleplace.stop_name.uncovered_place]']}))
+                        [('to.desc', 
+                         frame[':properties'][':[1_singleplace.stop_name.uncovered_place]'])]))
     elif frame[':properties'].has_key(':[3_arrivalplace.stop_name.uncovered_place]'):
         _register_uncovered_place(
             state, 
@@ -124,64 +128,72 @@ def speech_input_uncovered_to_desc(state, actuator, frame):
             state, 
             frame[':properties'][':[3_arrivalplace.stop_name.uncovered_place]'], 
             frame[':properties'][':parse_str'])
-        return (UserAction(
+        return (SpeechAct(
                     'inform', 
-                    {'to.desc': 
-                     frame[':properties'][':[3_arrivalplace.stop_name.uncovered_place]']}))
+                    [('to.desc', 
+                     frame[':properties'][':[3_arrivalplace.stop_name.uncovered_place]'])]))
     return None
 
 
 def speech_input_covered_from_desc(state, actuator, frame):
     if frame[':properties'].has_key(':[1_singleplace.stop_name.covered_place]'):
-        system_act = state.history_system_acts[-1]
-        if (not (system_act.act_type == 'request' and 
-                 system_act.has_relevant_arg('to')) and
-            not (system_act.act_type == 'expl-conf' and 
-                 system_act.has_relevant_arg('to'))):
+#         system_act = state.history_system_acts[-1]
+#         if (not (system_act.act_type == 'request' and 
+#                  system_act.has_relevant_arg('to')) and
+#             not (system_act.act_type == 'expl-conf' and 
+#                  system_act.has_relevant_arg('to'))):
+        if ({'act_type': 'request', 'concept': 'to'} not in
+            state.last_speech_out_event and
+            {'act_type': 'expl-conf', 'concept': 'to'} not in
+            state.last_speech_out_event):
             _register_place_type(
                 state, 
                 frame[':properties'][':[1_singleplace.stop_name.covered_place]'], 
                 frame[':properties'][':parse_str'])
-            return (UserAction(
+            return (SpeechAct(
                         'inform', 
-                        {'from.desc': 
-                         frame[':properties'][':[1_singleplace.stop_name.covered_place]']}))
+                        [('from.desc', 
+                         frame[':properties'][':[1_singleplace.stop_name.covered_place]'])]))
     elif frame[':properties'].has_key(':[2_departureplace.stop_name.covered_place]'):
         _register_place_type(
             state, 
             frame[':properties'][':[2_departureplace.stop_name.covered_place]'], 
             frame[':properties'][':parse_str'])
-        return (UserAction(
+        return (SpeechAct(
                     'inform', 
-                    {'from.desc': 
-                     frame[':properties'][':[2_departureplace.stop_name.covered_place]']}))
+                    [('from.desc', 
+                     frame[':properties'][':[2_departureplace.stop_name.covered_place]'])]))
     return None
 
 
 def speech_input_covered_to_desc(state, actuator, frame):
     if frame[':properties'].has_key(':[1_singleplace.stop_name.covered_place]'):
-        system_act = state.history_system_acts[-1]
-        if (not (system_act.act_type == 'request' and 
-                 system_act.has_relevant_arg('from')) and
-            not (system_act.act_type == 'expl-conf' and 
-                 system_act.has_relevant_arg('from'))):
+#         system_act = state.history_system_acts[-1]
+#         if (not (system_act.act_type == 'request' and 
+#                  system_act.has_relevant_arg('from')) and
+#             not (system_act.act_type == 'expl-conf' and 
+#                  system_act.has_relevant_arg('from'))):
+        if ({'act_type': 'request', 'concept': 'from'} not in
+            state.last_speech_out_event and
+            {'act_type': 'expl-conf', 'concept': 'from'} not in
+            state.last_speech_out_event):
             _register_place_type(
                 state, 
                 frame[':properties'][':[1_singleplace.stop_name.covered_place]'], 
                 frame[':properties'][':parse_str'])
-            return (UserAction(
+            return (SpeechAct(
                         'inform', 
-                        {'to.desc': 
-                         frame[':properties'][':[1_singleplace.stop_name.covered_place]']}))
+                        [('to.desc', 
+                         frame[':properties'][':[1_singleplace.stop_name.covered_place]'])]))
     elif frame[':properties'].has_key(':[3_arrivalplace.stop_name.covered_place]'):
         _register_place_type(
             state, 
             frame[':properties'][':[3_arrivalplace.stop_name.covered_place]'], 
             frame[':properties'][':parse_str'])
-        return (UserAction(
+        return (SpeechAct(
                     'inform', 
-                    {'to.desc': 
-                     frame[':properties'][':[3_arrivalplace.stop_name.covered_place]']}))
+                    [('to.desc', 
+                     frame[':properties'][':[3_arrivalplace.stop_name.covered_place]'])]))
     return None
 
 
@@ -190,20 +202,20 @@ def speech_input_route(state, actuator, frame):
         if not hasattr(state, 'uncovered_route'): 
             state.uncovered_route = {}
         state.uncovered_route[frame[':properties'][':[0_busnumber.route.0_uncovered_route]']] = True
-        return (UserAction(
+        return (SpeechAct(
                     'inform', 
-                    {'route': 
-                     frame[':properties'][':[0_busnumber.route.0_uncovered_route]']}))
+                    [('route', 
+                     frame[':properties'][':[0_busnumber.route.0_uncovered_route]'])]))
     elif frame[':properties'].has_key(':[0_busnumber.route.0_discontinued_route]'):
         if not hasattr(state, 'discontinued_route'): 
             state.discontinued_route = {}
         state.discontinued_route[frame[':properties'][':[0_busnumber.route.0_discontinued_route]']] = True
-        return (UserAction(
+        return (SpeechAct(
                     'inform', 
-                    {'route': 
-                     frame[':properties'][':[0_busnumber.route.0_discontinued_route]']}))
+                    [('route', 
+                     frame[':properties'][':[0_busnumber.route.0_discontinued_route]'])]))
     elif frame[':properties'].has_key(':[0_busnumber.route.0_covered_route]'):
-        return (UserAction('inform', {'route': frame[':properties'][':[0_busnumber.route.0_covered_route]']}))
+        return (SpeechAct('inform', [('route', frame[':properties'][':[0_busnumber.route.0_covered_route]'])]))
     return None
 
 
@@ -215,10 +227,10 @@ def _register_time_info(state, time, info):
     
 def speech_input_time(state, actuator, frame):
     if frame[':properties'].has_key(':[4_datetime]'):
-        out_events = Events()
+        out_events = EventList()
         out_events.add_event(
             'execute',
-            ExecutionOutputEvent(
+            ExecutionEvent(
                 {'operation': 'time_parse',
                  'time': frame[':properties'][':gal_slotsframe']}))
         actuator.execute(state, out_events)
@@ -280,84 +292,98 @@ def speech_input_time(state, actuator, frame):
                     time_parse[':timeperiod_spec'] == 'now '):
                 _register_time_info(state, 'next', date_time.copy())
                 app_logger.info('date_time: %s' % str(date_time))
-                return (UserAction('inform', {'time.rel': 'next'}))
+                return (SpeechAct('inform', [('time.rel', 'next')]))
             else:
                 _register_time_info(state, date_time['value'], 
                                     date_time.copy())
                 app_logger.info('date_time: %s' % str(date_time))
-                return (UserAction('inform', 
-                                   {'time.hour': date_time['value']}))
+                return (SpeechAct('inform', 
+                                   [('time.hour', date_time['value'])]))
         else:
             app_logger.info('No exact date time')
-            return (UserAction('inform', {'time.underspec': None}))
+            return (SpeechAct('inform', [('time.underspec', None)]))
 
     if frame[':properties'].has_key(':[4_busafterthatrequest]'):
         app_logger.info('%s' % frame[':properties'][':[4_busafterthatrequest]'])
-        system_act = state.history_system_acts[-1]
-        if (system_act.act_type == 'request' and 
-            system_act.has_relevant_arg('time')): 
+#         system_act = state.history_system_acts[-1]
+#         if (system_act.act_type == 'request' and 
+#             system_act.has_relevant_arg('time')): 
+        if ({'act_type': 'request', 'concept': 'time'} in
+            state.last_speech_out_event):
             date_time = {}
             date_time['period_spec'] = 'now'
             date_time['time_type'] = 'departure'
             date_time['now'] = 'true'
             _register_time_info(state, 'next', date_time.copy())
             app_logger.info('date_time: %s' % str(date_time))
-            return (UserAction('inform', {'time.rel': 'next'}))
+            return (SpeechAct('inform', [('time.rel', 'next')]))
     return None
 
 
 def speech_input_next_bus(state, actuator, frame):
     if frame[':properties'].has_key(':[4_busafterthatrequest]'):
-        system_act = state.history_system_acts[-1]
-        if (system_act.act_type == 'example' and 
-            system_act.concepts['act'] == 'nextquery'):
+#         system_act = state.history_system_acts[-1]
+#         if (system_act.act_type == 'example' and 
+#             system_act.concepts['act'] == 'nextquery'):
+        if ({'act_type': 'example', 'concept': 'act', 'value': 'nextquery'} in
+            state.last_speech_out_event):
             state.next_query = 'nextbus'
-            return (UserAction('nextbus', {}))
+            return (SpeechAct('nextbus', []))
     return None
 
 
 def speech_input_previous_bus(state, actuator, frame):
     if frame[':properties'].has_key(':[4_busbeforethatrequest]'):
-        system_act = state.history_system_acts[-1]
-        if (system_act.act_type == 'example' and 
-                system_act.concepts['act'] == 'nextquery'):
+#         system_act = state.history_system_acts[-1]
+#         if (system_act.act_type == 'example' and 
+#                 system_act.concepts['act'] == 'nextquery'):
+        if ({'act_type': 'example', 'concept': 'act', 'value': 'nextquery'} in
+            state.last_speech_out_event):
             state.next_query = 'prevbus' 
-            return (UserAction('prevbus', {}))
+            return (SpeechAct('prevbus', []))
     return None
 
 
 def speech_input_quit(state, actuator, frame):
     if frame[':properties'].has_key(':[generic.quit]'):
-        system_act = state.history_system_acts[-1]
-        if (system_act.act_type == 'example' and 
-                system_act.concepts['act'] == 'nextquery' or
-                system_act.act_type == 'canthelp.no_connection'):
+#         system_act = state.history_system_acts[-1]
+#         if (system_act.act_type == 'example' and 
+#                 system_act.concepts['act'] == 'nextquery' or
+#                 system_act.act_type == 'canthelp.no_connection'):
+        if ({'act_type': 'example', 'concept': 'act', 'value': 'nextquery'} in
+            state.last_speech_out_event or
+            {'act_type': 'canthelp.no_connection'} in
+            state.last_speech_out_event):
             state.next_query = 'bye' 
-            return (UserAction('bye', {}))
+            return (SpeechAct('bye', []))
     return None
 
 
 def speech_input_startover(state, actuator, frame):
     app_logger.info('semantic restart')
     if frame[':properties'].has_key(':[generic.startover]'):
-        system_act = state.history_system_acts[-1]
-        if (system_act.act_type == 'example' and 
-                system_act.concepts['act'] == 'nextquery' or
-                system_act.act_type == 'canthelp.no_connection'):
+#         system_act = state.history_system_acts[-1]
+#         if (system_act.act_type == 'example' and 
+#                 system_act.concepts['act'] == 'nextquery' or
+#                 system_act.act_type == 'canthelp.no_connection'):
+        if ({'act_type': 'example', 'concept': 'act', 'value': 'nextquery'} in
+            state.last_speech_out_event or
+            {'act_type': 'canthelp.no_connection'} in
+            state.last_speech_out_event):
             state.next_query = 'restart' 
-            return (UserAction('restart', {}))
+            return (SpeechAct('restart', []))
     return None
 
 
 def speech_input_affirm(state, actuator, frame):
     if frame[':properties'].has_key(':[generic.yes]'):
-        return (UserAction('affirm', None))
+        return (SpeechAct('affirm', []))
     return None
 
 
 def speech_input_negate(state, actuator, frame):
     if frame[':properties'].has_key(':[generic.no]'):
-        return (UserAction('negate', None))
+        return (SpeechAct('negate', []))
     return None
 
 
@@ -390,25 +416,17 @@ speech_input_negate,
 # Return the parsed results, input hyps.
 #===============================================================================
 def parse(state, actuator, frame):
-    speech_input = SpeechInputEvent()
-
     # when n-bests available, repeat the following as many times as the number of hypotheses
-    user_acts = []
+    turn = SpeechTurn()
+    score = float(frame[':properties'][':confidence'])
     for fn in speech_input_mapping_functions:
-        conf_score = float(frame[':properties'][':confidence'])
-        user_act = fn(state, actuator, frame)
-        if user_act != None:
-            user_acts.append(user_act)
-            
-    if len(user_acts) > 0:
-        slu_hyp = SLUHyp(user_acts, conf_score)
-        speech_input.SLU_Nbests.append(slu_hyp)
-    
-    if not speech_input.SLU_Nbests:
-        speech_input.SLU_Nbests.append(SLUHyp([UserAction('null', {})], 1.0))
-
-    app_logger.info('Input hypothesis:\n' + str(speech_input.SLU_Nbests.append[0]))
-        
-    return speech_input
+        act = fn(state, actuator, frame)
+        if act:
+            turn.append(act)
+    nbest = SpeechNbest()
+    nbest.append(turn, score)
+    event = SpeechEvent(nbest)
+    app_logger.info('\nSpeech in event:\n' + str(event))
+    return event
             
 

@@ -7,19 +7,31 @@ Created on Jul 2, 2014
 from collections import defaultdict
 from pprint import pformat, pprint
 
-speech_act_types = ['inform', 'request', 'confirm', 'affirm', 'negate',
-                    'canthelp']
+# speech_act_types = ['inform', 'request', 'expl-conf', 'impl-conf', 
+#                     'affirm', 'negate', 'canthelp']
 
 class SpeechAct(object):
     def __init__(self, act_type=None, concept_values=None):
-        assert act_type in speech_act_types
+#         assert act_type in speech_act_types
         self.act_type = act_type
         self.concept_values = concept_values
 
-    def __contains__(self, concept):
-        for c in self.concept_values.keys():
-            if c.startswith(concept):
-                return True
+    def __contains__(self, content):
+        act_type = content['act_type'] if 'act_type' in content else None
+        concept = content['concept'] if 'concept' in content else None
+        value = content['value'] if 'value' in content else None
+        if act_type and self.act_type != act_type:
+            return False
+        for c, v in self.concept_values:
+            if concept and value:
+                if c == concept and v == value:
+                    return True
+            elif concept:
+                if c == concept:
+                    return True
+            elif value:
+                if v == value:
+                    return True
         return False
 
     def __iter__(self):
@@ -48,7 +60,9 @@ class SpeechAct(object):
         return False
 
     def __str__(self):
-        return self.act_type + '(' + pformat(self.concept_values) + ')'
+        return (self.act_type + '(' + 
+                ' '.join(['%s=%s' % (c, v) for (c, v) in self.concept_values]) +
+                ')')
 
         
 class SpeechTurn(object):
@@ -69,6 +83,12 @@ class SpeechTurn(object):
     def __iter__(self):
         for s_act in self.speech_acts:
             yield s_act
+
+    def __contains__(self, content):
+        for s_act in self.speech_acts:
+            if content in s_act:
+                return True
+        return False
 
     def append(self, s_act):
         if not isinstance(s_act, SpeechAct):
@@ -97,8 +117,14 @@ class SpeechNbest(object):
         return self.nbest[i]
 
     def __iter__(self):
-        for score, s_turn in self.nbest:
-            yield score, s_turn
+        for s_turn, score in self.nbest:
+            yield s_turn, score
+
+    def __contains__(self, content):
+        for s_turn, score in self.nbest:
+            if content in s_turn:
+                return True
+        return False
 
     def append(self, s_turn, score):
         if not isinstance(s_turn, SpeechTurn):
@@ -119,7 +145,7 @@ class SpeechNbest(object):
         return concepts
         
     def marginal(self, act_type, concept=None, max_best=5):
-        assert act_type in speech_act_types
+#         assert act_type in speech_act_types
         concept_score = defaultdict(float)
         for s_turn, score in self.nbest[:max_best]:
             for s_act in s_turn:
@@ -145,11 +171,12 @@ class SpeechNbest(object):
 class SpeechEvent(object):
     def __init__(self, speech_nbest, nlg_args={}, priority=0):
         self.speech_nbest = speech_nbest
-        self.priority = priority
-        self.nlg_args = nlg_args
 
     def __str__(self):
         return str(self.speech_nbest)
+
+    def __contains__(self, content):
+        return content in self.speech_nbest
 
 
 if __name__ == '__main__':
@@ -169,3 +196,7 @@ if __name__ == '__main__':
     pprint(nbest.marginal('inform', 'time'))
     pprint(nbest.marginal('negate'))
     print nbest.get_concepts()
+    
+    print {'act_type': 'inform', 'concept': 'from', 'value': 'cmu'} in nbest
+    print {'act_type': 'request', 'concept': 'from'} in nbest
+    print {'concept': 'from'} in nbest

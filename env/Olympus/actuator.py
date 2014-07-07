@@ -153,6 +153,7 @@ class Actuator(object):
         content = content.replace('${final_floor_status}', floor_state)
         query = result = version = ''
         if 'query' in nlg_config:
+            # TODO: make a domain dependent module for NLG query
             if nlg_config['concept'] == 'from':
                 place = nlg_config['query']
                 query = ('query.departure_place\t{\nname\t%s\ntype\t%s\n}\n' % 

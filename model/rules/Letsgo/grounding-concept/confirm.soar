@@ -1,16 +1,30 @@
-sp {grounding-concept*propose*confirm
+sp {grounding-concept*propose*expl-conf
    (state <s> ^name grounding-concept
               ^top-state.concept-confirm-thld <th>
               ^top-state.user-goal.concept <c>)
    (<s> ^superstate.operator <sop>)
    (<sop> ^concept <cn>)
    (<c> ^name <cn>
-        ^top-hyp.score >= <th>
+        ^top-hyp.score > <th>
         ^top-hyp.value <val>)
+   (<s> ^top-state.concept-nlg-obj.<cn> <obj>)
 -->
    (<s> ^operator <op> +)
-   (<op> ^name confirm
-         ^actions.speak <speak>)
-   (<speak> ^act confirm
-            ^<cn> <val>)
+   (<op> ^name expl-conf
+         ^actions <act>)
+   (<act> ^speech <speech>
+          ^config <nlg>
+          ^config <asr>
+          ^turn <turn>)
+   (<speech> ^act_type expl-conf
+             ^<cn> <val>)
+   (<nlg> ^module NLG
+          ^act explicit_confirm
+          ^object <obj>
+          ^query <val>
+          ^concept <cn>)
+   (<asr> ^module ASR
+          ^set_dtmf_len 1
+          ^set_lm yes_no)
+   (<turn> ^yield true)
 }

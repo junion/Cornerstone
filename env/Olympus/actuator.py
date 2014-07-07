@@ -153,7 +153,14 @@ class Actuator(object):
         content = content.replace('${final_floor_status}', floor_state)
         query = result = version = ''
         if 'query' in nlg_config:
-            query = nlg_config['query']
+            if nlg_config['concept'] == 'from':
+                place = nlg_config['query']
+                query = ('query.departure_place\t{\nname\t%s\ntype\t%s\n}\n' % 
+                         (place, state.place_type[place]))
+            if nlg_config['concept'] == 'to':
+                place = nlg_config['query']
+                query = ('query.arrival_place\t{\nname\t%s\ntype\t%s\n}\n' % 
+                         (place, state.place_type[place]))
         if 'result' in nlg_config:
             result = nlg_config['result']
         if 'version' in nlg_config:

@@ -70,10 +70,14 @@ def speech_input_uncovered_from_desc(state, actuator, frame):
     if frame[':properties'].has_key(
             ':[1_singleplace.stop_name.uncovered_place]'):
         system_act = state.history_system_acts[-1]
-        if (not (system_act.act_type == 'request' and 
-                 system_act.has_relevant_arg('to')) and 
-            not (system_act.act_type == 'expl-conf' and 
-                 system_act.has_relevant_arg('to'))):
+#        if (not (system_act.act_type == 'request' and 
+#                 system_act.has_relevant_arg('to')) and 
+#            not (system_act.act_type == 'expl-conf' and 
+#                 system_act.has_relevant_arg('to'))):
+        if ({'act_type': 'request', 'concept': 'to'} not in
+            state.last_speech_out_event and
+            {'act_type': 'expl-conf', 'concept': 'to'} not in
+            state.last_speech_out_event):
             # register the uncovered_place for future reference
             _register_uncovered_place(
                 state, 
@@ -84,7 +88,7 @@ def speech_input_uncovered_from_desc(state, actuator, frame):
                 frame[':properties'][':parse_str'])
             return (SpeechAct(
                         'inform',
-                        [('from.desc',
+                        [('from',
                          frame[':properties'][':[1_singleplace.stop_name.uncovered_place]'])]))
     elif frame[':properties'].has_key(':[2_departureplace.stop_name.uncovered_place]'):
         _register_uncovered_place(
@@ -96,7 +100,7 @@ def speech_input_uncovered_from_desc(state, actuator, frame):
             frame[':properties'][':parse_str'])
         return (SpeechAct(
                     'inform', 
-                    [('from.desc', 
+                    [('from', 
                      frame[':properties'][':[2_departureplace.stop_name.uncovered_place]'])]))
     return None
 
@@ -104,10 +108,14 @@ def speech_input_uncovered_from_desc(state, actuator, frame):
 def speech_input_uncovered_to_desc(state, actuator, frame):
     if frame[':properties'].has_key(':[1_singleplace.stop_name.uncovered_place]'):
         system_act = state.history_system_acts[-1]
-        if (not (system_act.act_type == 'request' and 
-                 system_act.has_relevant_arg('from')) and
-            not (system_act.act_type == 'expl-conf' and 
-                 system_act.has_relevant_arg('from'))):
+#        if (not (system_act.act_type == 'request' and 
+#                 system_act.has_relevant_arg('from')) and
+#            not (system_act.act_type == 'expl-conf' and 
+#                 system_act.has_relevant_arg('from'))):
+        if ({'act_type': 'request', 'concept': 'from'} not in
+            state.last_speech_out_event and
+            {'act_type': 'expl-conf', 'concept': 'from'} not in
+            state.last_speech_out_event):
             # register the uncovered_place for future reference
             _register_uncovered_place(
                 state, 
@@ -118,7 +126,7 @@ def speech_input_uncovered_to_desc(state, actuator, frame):
                 frame[':properties'][':parse_str'])
             return (SpeechAct(
                         'inform', 
-                        [('to.desc', 
+                        [('to', 
                          frame[':properties'][':[1_singleplace.stop_name.uncovered_place]'])]))
     elif frame[':properties'].has_key(':[3_arrivalplace.stop_name.uncovered_place]'):
         _register_uncovered_place(
@@ -130,7 +138,7 @@ def speech_input_uncovered_to_desc(state, actuator, frame):
             frame[':properties'][':parse_str'])
         return (SpeechAct(
                     'inform', 
-                    [('to.desc', 
+                    [('to', 
                      frame[':properties'][':[3_arrivalplace.stop_name.uncovered_place]'])]))
     return None
 
@@ -152,7 +160,7 @@ def speech_input_covered_from_desc(state, actuator, frame):
                 frame[':properties'][':parse_str'])
             return (SpeechAct(
                         'inform', 
-                        [('from.desc', 
+                        [('from', 
                          frame[':properties'][':[1_singleplace.stop_name.covered_place]'])]))
     elif frame[':properties'].has_key(':[2_departureplace.stop_name.covered_place]'):
         _register_place_type(
@@ -161,7 +169,7 @@ def speech_input_covered_from_desc(state, actuator, frame):
             frame[':properties'][':parse_str'])
         return (SpeechAct(
                     'inform', 
-                    [('from.desc', 
+                    [('from', 
                      frame[':properties'][':[2_departureplace.stop_name.covered_place]'])]))
     return None
 
@@ -183,7 +191,7 @@ def speech_input_covered_to_desc(state, actuator, frame):
                 frame[':properties'][':parse_str'])
             return (SpeechAct(
                         'inform', 
-                        [('to.desc', 
+                        [('to', 
                          frame[':properties'][':[1_singleplace.stop_name.covered_place]'])]))
     elif frame[':properties'].has_key(':[3_arrivalplace.stop_name.covered_place]'):
         _register_place_type(
@@ -192,7 +200,7 @@ def speech_input_covered_to_desc(state, actuator, frame):
             frame[':properties'][':parse_str'])
         return (SpeechAct(
                     'inform', 
-                    [('to.desc', 
+                    [('to', 
                      frame[':properties'][':[3_arrivalplace.stop_name.covered_place]'])]))
     return None
 

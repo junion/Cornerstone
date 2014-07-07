@@ -20,6 +20,12 @@ sp {letsgo*apply*initialize-letsgo
          ^to 3
          ^date 4
          ^time 5)
+   (<s> ^concept-nlg-obj <no>)
+   (<no> ^route query-route_number
+         ^from query-departure_place
+         ^to query-arrival_place
+         ^date query-travel_time
+         ^time query-travel_time)
    (<s> ^user-goal <goal>)
    (<goal> ^concept <c1>
            ^concept <c2>
@@ -27,7 +33,6 @@ sp {letsgo*apply*initialize-letsgo
            ^concept <c4>
            ^concept <c5>)
    (<c1> ^name route
-         ^nlg-obj query-route_number
          ^top-hyp <c1-hyp1>
          ^second-hyp <c1-hyp2>
          ^rest-hyp <c1-hyp3>)
@@ -38,7 +43,6 @@ sp {letsgo*apply*initialize-letsgo
    (<c1-hyp3> ^value nil
               ^score 0.0)
    (<c2> ^name from
-         ^nlg-obj query-departure_place
          ^top-hyp <c2-hyp1>
          ^second-hyp <c2-hyp2>
          ^rest-hyp <c2-hyp3>)
@@ -49,7 +53,6 @@ sp {letsgo*apply*initialize-letsgo
    (<c2-hyp3> ^value nil
               ^score 0.0)
    (<c3> ^name to
-         ^nlg-obj query-arrival_place
          ^top-hyp <c3-hyp1>
          ^second-hyp <c3-hyp2>
          ^rest-hyp <c3-hyp3>)
@@ -60,7 +63,6 @@ sp {letsgo*apply*initialize-letsgo
    (<c3-hyp3> ^value nil
               ^score 0.0)
    (<c4> ^name date
-         ^nlg-obj query-travel_time
          ^top-hyp <c4-hyp1>
          ^second-hyp <c4-hyp2>
          ^rest-hyp <c4-hyp3>)
@@ -71,7 +73,6 @@ sp {letsgo*apply*initialize-letsgo
    (<c4-hyp3> ^value nil
               ^score 0.0)
    (<c5> ^name time
-         ^nlg-obj query-travel_time
          ^top-hyp <c5-hyp1>
          ^second-hyp <c5-hyp2>
          ^rest-hyp <c5-hyp3>)

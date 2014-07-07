@@ -74,18 +74,24 @@ class Controller(object):
         # currently top, second, rest will be enough for decision making
         # TODO: update only changed concepts
         for concept in state.concepts.keys():
+#            self.app_logger.info('\nConcept %s update:\n%s' % str(state.concepts[concept]))
             cu = self.re_agent.CreateIdWME(self.events, 'concept-update')
             self.re_agent.CreateStringWME(cu, 'name', concept)
-            nbest = state.concepts[concept].get_nbest()
-            hyp1 = self.re_agent.CreateIdWME(cu, 'top-hyp')
-            self.re_agent.CreateStringWME(hyp1, 'value', nbest[0][0])
-            self.re_agent.CreateFloatWME(hyp1, 'score', nbest[0][1])
-            hyp2 = self.re_agent.CreateIdWME(cu, 'second-hyp')
-            self.re_agent.CreateStringWME(hyp2, 'value', nbest[1][0])
-            self.re_agent.CreateFloatWME(hyp2, 'score', nbest[1][1])
-            hyp3 = self.re_agent.CreateIdWME(cu, 'rest-hyp')
-            self.re_agent.CreateStringWME(hyp3, 'value', nbest[2][0])
-            self.re_agent.CreateFloatWME(hyp3, 'score', nbest[2][1])
+            rest_score = 1.0
+            for i, label in enumerate(['top-hyp', 'second-hyp']):
+                item = state.concepts[concept].get_item(i+1)
+                if item:
+                    value, score = item
+                else:
+                    value = 'nil'
+                    score = 0.0
+                hyp = self.re_agent.CreateIdWME(cu, label)
+                self.re_agent.CreateStringWME(hyp, 'value', value)
+                self.re_agent.CreateFloatWME(hyp, 'score', score)
+                rest_score -= score
+            hyp = self.re_agent.CreateIdWME(cu, 'rest-hyp')
+            self.re_agent.CreateStringWME(hyp, 'value', 'nil')
+            self.re_agent.CreateFloatWME(hyp, 'score', rest_score)
         # backup the state  
         self.prev_state = deepcopy(state)
         
@@ -93,7 +99,7 @@ class Controller(object):
         self.app_logger.info('\nCreate input to rule engine')
         self.create_input_to_rule_engine(state)
         self.app_logger.info('\nGet outboound events from rule engine')
-        out_events = self.get_events('grounding-concept*propose*request')
+        out_events = self.get_events('grounding-concept*propose*expl-conf')
         self.app_logger.info('\n'+str(out_events))
         return out_events
         
@@ -155,7 +161,7 @@ class Controller(object):
                 self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('matches --assertions --wmes'))
                 if isinstance(matches, basestring):
                     self.app_logger.info('\nmatches production %s:' % matches)
-                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('matches %s' % matches))
+                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('matches -t -w %s' % matches))
                 self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('predict'))
                 self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('preferences S1 operator --names'))
                 self.re_agent.ExecuteCommandLine('run -p 1')

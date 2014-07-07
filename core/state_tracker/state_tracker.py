@@ -57,7 +57,7 @@ class SimpleRuleStateTracker(StateTracker):
             concepts = out_concepts.union(in_concepts)
             for concept in concepts:
                 inform_obs = in_nbest.marginal('inform', concept)
-                confirm_acts = out_nbest.marginal('confirm', concept)
+                confirm_acts = out_nbest.marginal('expl-conf', concept)
                 affirm_obs = []
                 negate_obs = []
                 if confirm_acts:
@@ -87,7 +87,9 @@ class SimpleRuleStateTracker(StateTracker):
             cb_state[item] += score
         for item, score in negate_obs:
             cb_state[item] -= min(cb_state[item], score)
-        state.concepts[concept] = cb_state.normalize()
+        state.concepts[concept] = cb_state
+        self.app_logger.info('\nConcept %s update:\n%s' % 
+                             (concept, str(state.concepts[concept])))
                 
 
 if __name__ == '__main__':
@@ -102,7 +104,7 @@ if __name__ == '__main__':
     # speech out event
     nbest = SpeechNbest()
     t = SpeechTurn()
-    t.append(SpeechAct('confirm', [('route', '54c')]))
+    t.append(SpeechAct('expl-conf', [('route', '54c')]))
     nbest.append(t, 1.0)
 #     print nbest
     out_event = SpeechEvent(nbest)

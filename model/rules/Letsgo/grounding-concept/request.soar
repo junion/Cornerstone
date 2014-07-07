@@ -3,11 +3,10 @@ sp {grounding-concept*propose*request
               ^top-state.concept-confirm-thld <th>
               ^top-state.user-goal.concept <c>)
    (<s> ^superstate.operator <sop>)
-#   (<sop> ^concept { <> route <cn> })
    (<sop> ^concept <cn>)
    (<c> ^name <cn>
-        ^nlg-obj <obj>
-        ^top-hyp.score < <th>)
+        ^top-hyp.score <= <th>)
+   (<s> ^top-state.concept-nlg-obj.<cn> <obj>)
 -->
    (<s> ^operator <op> +)
    (<op> ^name request

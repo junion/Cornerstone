@@ -300,13 +300,13 @@ def speech_input_time(state, actuator, frame):
                     time_parse[':timeperiod_spec'] == 'now '):
                 _register_time_info(state, 'next', date_time.copy())
                 app_logger.info('date_time: %s' % str(date_time))
-                return (SpeechAct('inform', [('time.rel', 'next')]))
+                return (SpeechAct('inform', [('time', 'next')]))
             else:
                 _register_time_info(state, date_time['value'], 
                                     date_time.copy())
                 app_logger.info('date_time: %s' % str(date_time))
                 return (SpeechAct('inform', 
-                                   [('time.hour', date_time['value'])]))
+                                   [('time', date_time['value'])]))
         else:
             app_logger.info('No exact date time')
             return (SpeechAct('inform', [('time.underspec', None)]))
@@ -324,7 +324,7 @@ def speech_input_time(state, actuator, frame):
             date_time['now'] = 'true'
             _register_time_info(state, 'next', date_time.copy())
             app_logger.info('date_time: %s' % str(date_time))
-            return (SpeechAct('inform', [('time.rel', 'next')]))
+            return (SpeechAct('inform', [('time', 'next')]))
     return None
 
 

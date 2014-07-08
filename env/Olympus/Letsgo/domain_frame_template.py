@@ -32,12 +32,7 @@ system_utterance_frame_template = '''
 	   :final_floor_status "${final_floor_status}"
 	   :id "DialogManager-${sess_id}:${id_suffix}"
 	   :inframe "start
-{
-act	${dialog_act}
-object	${object}
-_repeat_counter	0
-${nlg_args}system_version	1
-}
+${nlg_config}
 end
 "
 ${tts_config}   :utt_count "${utt_count}" }}'''

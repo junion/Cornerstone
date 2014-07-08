@@ -47,7 +47,7 @@ class AgentThread(threading.Thread):
         self.event_wait_timeout = self.config.getint(MODULE_ID, 
                                                      'eventWaitTimeout')
         # domain
-        self.domain = self.config.get(MODULE_ID, 'domain')
+        self.domain = self.config.get('Common', 'domain')
         # create a parser for core input
         self.user_input_parser = importlib.import_module(
                                     self.domain + '.domain_input_parser')

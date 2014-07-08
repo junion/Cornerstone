@@ -1,4 +1,11 @@
+'''
+Created on Jul 4, 2014
+
+@author: Sungjin Lee
+'''
+
 import logging
+import importlib
 from pprint import pformat
 
 from config.global_config import get_config
@@ -20,6 +27,16 @@ class Actuator(object):
         # queues for communication with the galaxy server 
         self.out_queue = out_queue
         self.result_queue = result_queue
+        # domain
+        self.domain = self.config.get('Common', 'domain')
+        # modules for composing messages to other components in a SDS
+        self.asr_config = importlib.import_module(
+                            self.domain + '.domain_asr_config')
+        self.nlg_config = importlib.import_module(
+                            self.domain + '.domain_nlg_config')
+        self.tts_config = importlib.import_module(
+                            self.domain + '.domain_tts_config')
+
     
     #=========================================================================
     # APIs
@@ -116,14 +133,8 @@ class Actuator(object):
         content = content.replace('${notify_prompts}', 
                                   ' '.join(state.notify_prompts))
         if state.asr_config:
-            asr_config_str = []
-            for key in state.asr_config.keys():
-                asr_config_str.append(key+' = '+
-                                      state.asr_config[key])
-            self.app_logger.info(', '.join(asr_config_str))
-            content = content.replace(
-                            '${input_line_config}', 
-                            ', '.join(asr_config_str))
+            asr_msg = self.asr_config.compose_msg(state)
+            content = content.replace('${input_line_config}', asr_msg)
         else:
             content = content.replace('${input_line_config}', '')
         return content
@@ -131,52 +142,24 @@ class Actuator(object):
     def _send_system_utterance_message(self, state, nlg_config, tts_config):
         content = system_utterance_frame_template
         content = content.replace('${sess_id}', state.session_id)
-        content = content.replace('${id_suffix}', '%03d'%state.id_suffix)
+        content = content.replace('${id_suffix}', '%03d' % state.id_suffix)
         content = content.replace('${utt_count}', str(state.utt_count))
         content = content.replace('${dialog_state_index}',
                                   str(state.dialog_state_index))
         content = content.replace('${dialog_state}', 
                                   self._compose_dialog_state(state))
-        content = content.replace('${dialog_act}', 
-                                  nlg_config['act'])
-        content = content.replace('${object}', nlg_config['object'].replace('-', '.'))
-#         if nlg_config['act'] == 'request':
-#             floor_state = 'user'
-#         elif nlg_config['act'] == 'inform':
-#             floor_state = 'free'
-#         else: 
-#             floor_state = 'free'
+#         content = content.replace('${dialog_act}', 
+#                                   nlg_config['act'])
+#         content = content.replace('${object}', nlg_config['object'].replace('-', '.'))
         if state.turn_yield:
             floor_state = 'user'
         else: 
             floor_state = 'free'
         content = content.replace('${final_floor_status}', floor_state)
-        query = result = version = ''
-        if 'query' in nlg_config:
-            # TODO: make a domain dependent module for NLG query
-            if nlg_config['concept'] == 'from':
-                place = nlg_config['query']
-                query = ('query.departure_place\t{\nname\t%s\ntype\t%s\n}\n' % 
-                         (place, state.place_type[place]))
-            if nlg_config['concept'] == 'to':
-                place = nlg_config['query']
-                query = ('query.arrival_place\t{\nname\t%s\ntype\t%s\n}\n' % 
-                         (place, state.place_type[place]))
-        if 'result' in nlg_config:
-            result = nlg_config['result']
-        if 'version' in nlg_config:
-            version = nlg_config['version']
-        content = content.replace('${nlg_args}', 
-                                  ''.join([query, result, version]))
-#         content = content.replace('${tts_config}', 
-#                                   tts_config_event.configs)
-        tts_config_str = []
-        if tts_config:
-            for key in tts_config.keys():
-                tts_config_str.append('   :'+key+' "'+
-                                      tts_config[key]+'"\n')
-        content = content.replace('${tts_config}', ''.join(tts_config_str))
-        self.app_logger.info(''.join(tts_config_str))
+        nlg_msg = self.nlg_config.compose_msg(state, nlg_config)
+        content = content.replace('${nlg_config}', nlg_msg)
+        tts_msg = self.tts_config.compose_msg(state, tts_config)
+        content = content.replace('${tts_config}', tts_msg)
         message = {'type':'GALAXYACTIONCALL',
                    'content':content}
         state.notify_prompts.append(str(state.utt_count))

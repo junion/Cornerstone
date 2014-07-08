@@ -49,15 +49,15 @@ class SpeechAct(object):
             concepts.add(c)
         return concepts
                 
-    def serialize_args(self):
-        return '&'.join([str(self.concept_values[k]) 
-                         for k in sorted(self.concept_values.keys())])
-
-    def has_relevant_arg(self, key):
-        for arg in self.concept_values.keys():
-            if arg.startswith(key):
-                return True
-        return False
+#     def serialize_args(self):
+#         return '&'.join([str(self.concept_values[k]) 
+#                          for k in sorted(self.concept_values.keys())])
+# 
+#     def has_relevant_arg(self, key):
+#         for arg in self.concept_values.keys():
+#             if arg.startswith(key):
+#                 return True
+#         return False
 
     def __str__(self):
         return (self.act_type + '(' + 

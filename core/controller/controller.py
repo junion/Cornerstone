@@ -16,7 +16,7 @@ from core.datatypes.speech_event import (
         SpeechEvent, SpeechNbest, SpeechTurn, SpeechAct)
 from core.datatypes.config_event import ConfigEvent
 from core.datatypes.turn_event import TurnEvent
-
+from core.datatypes.execute_event import ExecuteEvent
 
 MODULE_ID = 'Controller'
 
@@ -42,11 +42,11 @@ class Controller(object):
         # load domain rules
         self.domain_rule_source = self.config.get(MODULE_ID, 
                                                   'domainRuleSource')
-        self.app_logger.info('domain rules loaded')
         # variable for an event link
         self.events = None
         # source rules for a given domain
-        self.re_agent.ExecuteCommandLine("source " + self.domain_rule_source)
+        self.app_logger.info(self.re_agent.ExecuteCommandLine("source " + self.domain_rule_source))
+        self.app_logger.info('domain rules loaded')
         # set the stop phase to 'After output'
         self.re_agent.ExecuteCommandLine('set-stop-phase -Ao')
         self.app_logger.info('Controller created')
@@ -99,7 +99,7 @@ class Controller(object):
         self.app_logger.info('\nCreate input to rule engine')
         self.create_input_to_rule_engine(state)
         self.app_logger.info('\nGet outboound events from rule engine')
-        out_events = self.get_events('grounding-concept*propose*expl-conf')
+        out_events = self.get_events('letsgo*propose*provide-info')
         self.app_logger.info('\n'+str(out_events))
         return out_events
         
@@ -137,6 +137,11 @@ class Controller(object):
                         events.add_event('config', ConfigEvent(module, params))
                     elif event_type == 'turn':
                         events.add_event('turn', TurnEvent(params))
+                    elif event_type == 'execute':
+                        operation = params['operation']
+                        del params['operation']
+                        events.add_event('execute', 
+                                         ExecuteEvent(operation, params))
                     else:
                         self.app_logger.info(event_type)
 #                         raise ValueError

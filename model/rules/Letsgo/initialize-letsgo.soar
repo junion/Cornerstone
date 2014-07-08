@@ -15,11 +15,11 @@ sp {letsgo*apply*initialize-letsgo
    (<s> ^concept-accept-thld 0.9
         ^concept-confirm-thld 0.4)
    (<s> ^concept-precedence <cp>)
-   (<cp> ^route 1
-         ^from 2
+   (<cp> ^route 5
+         ^from 4
          ^to 3
-         ^date 4
-         ^time 5)
+         ^date 2
+         ^time 1)
    (<s> ^concept-nlg-obj <no>)
    (<no> ^route query-route_number
          ^from query-departure_place

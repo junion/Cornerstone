@@ -38,7 +38,9 @@ class StateTracker(object):
     def update_last_out_events(self, state, out_events):
         # LIMIT: currently assume that 
         # the system makes only a speech out event
-        state.last_speech_out_event = out_events.get_events('speech')[0]
+        speech_events = out_events.get_events('speech')
+        if speech_events:
+            state.last_speech_out_event = speech_events[0]
 
 
 class SimpleRuleStateTracker(StateTracker):

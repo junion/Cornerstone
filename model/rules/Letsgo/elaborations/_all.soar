@@ -10,16 +10,39 @@ sp {elaborate*state*top-state
    (<s> ^top-state <ts>)
 }
 
-sp {letsgo*select*begin-vs-grounding
+#sp {letsgo*select*begin-vs-grounding
+#   (state <s> ^name letsgo
+#              ^operator <op1> +
+#                        <op2> +)
+#   (<op1> ^name begin-session)
+#   (<op2> ^name grounding-concept)
+#-->
+#   (<s> ^operator <op1> > <op2>)
+#}
+
+sp {letsgo*select*priority-unequal
    (state <s> ^name letsgo
               ^operator <op1> +
                         <op2> +)
-   (<op1> ^name begin-session)
-   (<op2> ^name grounding-concept)
+   (<op1> ^priority <p1>)
+   (<op2> ^priority { <p2> > <p1> })
+   
 -->
-   (<s> ^operator <op1> > <op2>)
+   (<s> ^operator <op2> > <op1>)
 }
 
+sp {letsgo*select*priority-equal
+   (state <s> ^name letsgo
+              ^operator <op1> +
+                        <op2> +)
+   (<op1> ^priority <p1>)
+   (<op2> ^priority { <p2> = <p1> })
+   (<op1> ^name <n>)
+   (<op2> ^name <> <n>)
+-->
+   (<s> ^operator <op2> =)
+   (<s> ^operator <op1> =)
+}
 
 
 # This doesn't work. Use remove-wme command instead

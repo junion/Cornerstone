@@ -10,7 +10,7 @@ import logging
 from core.datatypes.event_list import EventList
 from core.datatypes.speech_event import (
      SpeechEvent, SpeechNbest, SpeechTurn, SpeechAct)
-from core.datatypes.execution_event import ExecutionEvent
+from core.datatypes.execute_event import ExecuteEvent
 
 app_logger = logging.getLogger('DomainInputParser')
 
@@ -238,9 +238,9 @@ def speech_input_time(state, actuator, frame):
         out_events = EventList()
         out_events.add_event(
             'execute',
-            ExecutionEvent(
-                {'operation': 'time_parse',
-                 'time': frame[':properties'][':gal_slotsframe']}))
+            ExecuteEvent(
+                'time_parse',
+                {'time': frame[':properties'][':gal_slotsframe']}))
         actuator.execute(state, out_events)
 
         time_parse = state.time_parses[frame[':properties'][':gal_slotsframe']]

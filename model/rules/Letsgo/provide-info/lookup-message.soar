@@ -1,0 +1,24 @@
+sp {provide-info*propose*lookup-message
+   (state <s> ^name provide-info
+             -^top-state.applied-actions lookup-message)
+-->
+   (<s> ^operator <op> +)
+   (<op> ^name lookup-message
+         ^actions <act>)
+   (<act> ^speech <speech>
+          ^config <nlg>
+          ^config <asr>
+          ^config <tts>
+          ^turn <turn>)
+   (<speech> ^act_type hold-on)
+   (<nlg> ^module NLG
+          ^act inform
+          ^object looking_up_database_first)
+   (<asr> ^module ASR
+          ^set_dtmf_len 1
+          ^set_lm first_query)
+   (<tts> ^module TTS
+          ^non-listening true
+          ^non-repeatable true)
+   (<turn> ^yield false)
+}

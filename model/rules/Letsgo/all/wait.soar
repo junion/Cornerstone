@@ -7,6 +7,7 @@ sp {top-state*propose*wait
 -->
    (<s> ^operator <op>)
    (<op> ^name wait
+         ^priority 0
          ^actions.wait <wait>)
    (<wait> ^act wait)
 }

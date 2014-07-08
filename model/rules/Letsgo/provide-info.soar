@@ -1,21 +1,24 @@
-sp {letsgo*propose*provide-info-1
+sp {letsgo*propose*provide-info
    (state <s> ^name letsgo
-              ^got-required
-              ^user-goal.concept <c>)
-   (<c> ^name date
-        ^value nil)
+              ^concept-accept-thld <th>)
+   (<s> ^user-goal.concept <from>)
+   (<from> ^name from
+           ^top-hyp.score > <th>
+           ^top-hyp.value <from-top>)
+   (<s> ^user-goal.concept <to>)
+   (<to> ^name to 
+         ^top-hyp.score > <th>
+         ^top-hyp.value <to-top>)
+   (<s> ^user-goal.concept <time>)
+   (<time> ^name time
+           ^top-hyp.score > <th>
+           ^top-hyp.value <time-top>)
 -->
    (<s> ^operator <op> +)
-   (<op> ^name provide-info)
-}
-
-sp {letsgo*propose*provide-info-2
-   (state <s> ^name letsgo
-              ^got-required
-              ^user-goal.concept <c>)
-   (<c> ^name date
-        ^score > 0.9)
--->
-   (<s> ^operator <op> +)
-   (<op> ^name provide-info)
+   (<op> ^name provide-info
+         ^priority 3
+         ^exec-args <args>)
+   (<args> ^from <from-top>
+           ^to <to-top>
+           ^time <time-top>)
 }

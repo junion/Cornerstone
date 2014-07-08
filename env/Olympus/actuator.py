@@ -10,7 +10,8 @@ from pprint import pformat
 
 from config.global_config import get_config
 from env.Olympus.Letsgo.domain_frame_template import *
-
+from core.datatypes.event_list import EventList
+from core.datatypes.execute_event import ExecuteEvent
 
 MODULE_ID = 'Actuator'
 
@@ -95,25 +96,31 @@ class Actuator(object):
                     state, nlg_config, tts_config)
             state.last_speech_out_event = speech_event
         elif execute_event:
-            if execute_event['operation'] == 'place_query':
+            if execute_event.operation == 'place_query':
                 self._send_place_query_message(
-                        state, execute_event['place'], 
-                        execute_event['place_type'])
-            elif execute_event['operation'] == 'time_parse':
-                self._send_time_parse_message(state, execute_event['time'])
-            elif execute_event['operation'] == 'schedule_query':
+                        state, execute_event.args['place'], 
+                        execute_event.args['place_type'])
+            elif execute_event.operation == 'time_parse':
+                self._send_time_parse_message(state, execute_event.args['time'])
+            elif execute_event.operation == 'schedule_query':
                 self._send_schedule_query_message(
-                        state, execute_event['from'], execute_event['to'], 
-                        execute_event['time'])
-            elif execute_event['operation'] == 'subsequent_schedule_query':
+                        state, execute_event.args['from'], 
+                        execute_event.args['to'], execute_event.args['time'])
+                if state.schedule_query_result[':outframe'].find('failed\t0') > -1:
+                    in_events = EventList.append(
+                                    ExecuteEvent('schedule-query', 
+                                                 {'result': 'true'}))
+            elif execute_event.operation == 'subsequent_schedule_query':
                 self._send_schedule_query_message(
-                        state, execute_event['from'], execute_event['to'], 
-                        execute_event['time'], next=state.next_query, 
+                        state, execute_event.args['from'], 
+                        execute_event.args['to'], 
+                        execute_event.args['time'], next=state.next_query, 
                         prev_result=state.schedule_query_result)
-            elif execute_event['operation'] == 'user_defined_function':
-                execute_event['function'](state, self)
-            elif execute_event['operation'] == 'close':
+            elif execute_event.operation == 'user_defined_function':
+                execute_event.args['function'](state, self)
+            elif execute_event.operation == 'close':
                 self.send_finish_message()
+        return None
     
     def send_wait_event_message(self):
         message = {'type':'WAITINTERACTIONEVENT'}

@@ -81,11 +81,14 @@ class AgentThread(threading.Thread):
 #                 self.app_logger.info('New event: %s' % str(in_events)) 
                 self._update_state_for_event(frame, in_events)
                 if self._take_turn():
-                    # call the agent with the input and get output events
-                    out_events = self.agent.run(in_events)
-    #                 self.app_logger.info('Out event: %s' % str(out_events))
-                    # convert the core output to a galaxy frame
-                    self.actuator.execute(self.session_state, out_events)
+                    while True:
+                        # call the agent with the input and get output events
+                        out_events = self.agent.run(in_events)
+        #                 self.app_logger.info('Out event: %s' % str(out_events))
+                        # convert the core output to a galaxy frame
+                        in_events = self.actuator.execute(self.session_state, out_events)
+                        if in_events.empty():
+                            break
                 self.app_logger.info('Execution done')
                 self.actuator.send_wait_event_message()
             except Exception:
@@ -137,7 +140,7 @@ class AgentThread(threading.Thread):
         # store the event_type in the dialog state, 
         # so we don't need to reference the frame later
         self.session_state.last_event_type = event_type
-        
+
     #=========================================================================
     # Event handlers
     #=========================================================================

@@ -87,7 +87,7 @@ class AgentThread(threading.Thread):
         #                 self.app_logger.info('Out event: %s' % str(out_events))
                         # convert the core output to a galaxy frame
                         in_events = self.actuator.execute(self.session_state, out_events)
-                        if in_events.empty():
+                        if not in_events:
                             break
                 self.app_logger.info('Execution done')
                 self.actuator.send_wait_event_message()

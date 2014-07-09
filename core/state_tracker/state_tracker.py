@@ -26,11 +26,18 @@ class StateTracker(object):
             state.in_event_history.append(state.new_events)
         state.new_events = in_events
         self.update_session_state(state, in_events)
+        self.update_execute_state(state, in_events)
         self.update_belief_state(state, in_events)
         
     def update_session_state(self, state, in_events):
         for event in in_events.get_events('session'):
             state.session_status = event.status
+        
+    def update_execute_state(self, state, in_events):
+        state.execute_result = None
+        for event in in_events.get_events('state'):
+            if event.state == 'execute-result':
+                state.execute_result = event.args
         
     def update_belief_state(self, state, in_events):
         raise NotImplementedError

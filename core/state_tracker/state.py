@@ -12,6 +12,8 @@ class State(object):
         self.in_event_history = []
         # session status
         self.session_status = None
+        # execution result
+        self.execute_result = None
         # concepts to track
         self.concepts = {}
         # last speech outbound event

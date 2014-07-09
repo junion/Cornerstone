@@ -70,6 +70,10 @@ class Controller(object):
                 self.re_agent.CreateStringWME(self.events, 'end-session', 'nil')
             else:
                 raise ValueError
+        # execute state
+        if state.execute_result:
+            (operation, result) = state.execute_result.items()[0]
+            self.re_agent.CreateStringWME(self.events, operation, result)
         # belief state
         # currently top, second, rest will be enough for decision making
         # TODO: update only changed concepts

@@ -100,8 +100,8 @@ class Actuator(object):
                     state, nlg_config, tts_config)
             state.last_speech_out_event = speech_event
         elif execute_event:
-            self.executor.execute(state, execute_event, 
-                                  self.out_queue, self.result_queue)
+            return self.executor.execute(state, execute_event,
+                             self.out_queue, self.result_queue)
         return None
     
     def send_wait_event_message(self):

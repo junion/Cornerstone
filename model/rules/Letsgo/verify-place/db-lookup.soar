@@ -1,0 +1,12 @@
+sp {verify-place*propose*do-lookup
+   (state <s> ^name verify-place
+              ^superstate.operator <sop>)
+   (<sop> ^exec-args <args>)
+   (<args> ^place <value>)
+-->
+   (<s> ^operator <op> +)
+   (<op> ^name do-lookup
+         ^actions <act>)
+   (<act> ^execute <args>)
+   (<args> ^operation place-query)
+}

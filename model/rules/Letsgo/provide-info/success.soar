@@ -1,7 +1,7 @@
 sp {provide-info*propose*success
    (state <s> ^name provide-info
               ^top-state.applied-actions do-lookup
-              ^top-state.schedule-query-success true)
+              ^top-state.execute-result.schedule-query success)
 -->
    (<s> ^operator <op> +)
    (<op> ^name success

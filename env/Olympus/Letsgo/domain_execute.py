@@ -18,26 +18,32 @@ MODULE_ID = 'DomainExecute'
 app_logger = logging.getLogger(MODULE_ID)
 
 def execute(state, execute_event, out_queue, result_queue):
-    if execute_event.operation == 'place_query':
+    if execute_event.operation == 'place-query':
         _send_place_query_message(
                 state, execute_event.args['place'],
                 out_queue, result_queue)
+        in_events = EventList()
+        in_events.add_event(
+                 'state',
+                 StateEvent('execute-result', 
+                            {'place-query': execute_event.args['place']}))
+        return in_events
     elif execute_event.operation == 'time_parse':
         _send_time_parse_message(state, execute_event.args['time'],
                                  out_queue, result_queue)
-    elif execute_event.operation == 'schedule_query':
+    elif execute_event.operation == 'schedule-query':
         _send_schedule_query_message(
                 state, execute_event.args['from'], 
                 execute_event.args['to'], execute_event.args['time'],
                 out_queue, result_queue)
         in_events = EventList()
         if state.schedule_query_result[':outframe'].find('failed\t0') > -1:
-            in_events.append(
+            in_events.add_event(
                          'state',
                          StateEvent('execute-result', 
                                     {'schedule-query': 'success'}))
         else:
-            in_events.append(
+            in_events.add_event(
                          'state',
                          StateEvent('execute-result', 
                                     {'schedule-query': 'fail'}))
@@ -51,18 +57,19 @@ def execute(state, execute_event, out_queue, result_queue):
                 prev_result=state.schedule_query_result)
         in_events = EventList()
         if state.schedule_query_result[':outframe'].find('failed\t0') > -1:
-            in_events.append(
+            in_events.add_event(
                          'state',
                          StateEvent('execute-result', 
                                     {'schedule-query': 'success'}))
         else:
-            in_events.append(
+            in_events.add_event(
                          'state',
                          StateEvent('execute-result', 
                                     {'schedule-query': 'fail'}))
         return in_events
     elif execute_event.operation == 'user_defined_function':
         execute_event.args['function'](state)
+    return None
 
 def _send_place_query_message(state, place, out_queue, result_queue):
     # Backend lookup

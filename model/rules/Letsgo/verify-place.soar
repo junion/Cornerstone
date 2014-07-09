@@ -1,0 +1,15 @@
+sp {letsgo*propose*verify-place
+   (state <s> ^name letsgo
+              ^concept-accept-thld <th>)
+   (<s> ^user-goal.concept <c>)
+   (<c> ^name << from to >>
+        ^top-hyp.score > <th>
+        ^top-hyp.value <value>)
+   (<s> -^execute-result.place-query <value>)
+-->
+   (<s> ^operator <op> +)
+   (<op> ^name verify-place
+         ^priority 3
+         ^exec-args <args>)
+   (<args> ^place <value>)
+}

@@ -1,5 +1,5 @@
 VERSION 4
-/letsgo/letsgo.dm
+\letsgo\letsgo.dm
 0	ROOT letsgo letsgo 1
 1	0	FOPERATOR _firstload _firstload.soar 2
 2	0	FOLDER all all 3
@@ -8,24 +8,29 @@ VERSION 4
 5	4	FOPERATOR _all _all.soar 6
 6	4	FOPERATOR action-command action-command.soar 7
 7	4	FOPERATOR concept-update concept-update.soar 8
-8	4	FOPERATOR top-state top-state.soar 9
-9	0	HLOPERATOR begin-session begin-session.soar begin-session 11 10
-10	9	FOPERATOR elaborations elaborations.soar 11
-11	9	OPERATOR init-help init-help.soar 12
-12	9	OPERATOR opening opening.soar 13
-13	0	HLOPERATOR grounding-concept grounding-concept.soar grounding-concept 20 14
-14	13	FOPERATOR elaborations elaborations.soar 15
-15	13	OPERATOR confirm confirm.soar 16
-16	13	OPERATOR request request.soar 17
-17	0	OPERATOR initialize-letsgo initialize-letsgo.soar 18
-18	0	HLOPERATOR provide-info provide-info.soar provide-info 31 19
-19	18	FOPERATOR elaborations elaborations.soar 20
-20	18	OPERATOR db-lookup db-lookup.soar 21
-21	18	OPERATOR fail fail.soar 22
-22	18	OPERATOR lookup-message lookup-message.soar 23
-23	18	OPERATOR success success.soar 24
-24	0	HLOPERATOR restart-if-asked restart-if-asked.soar restart-if-asked 44 25
-25	24	FOPERATOR elaborations elaborations.soar 26
-26	24	OPERATOR ask-restart ask-restart.soar 27
-27	24	OPERATOR end-session end-session.soar 28
+8	4	FOPERATOR elaboration_selection elaboration_selection.soar 9
+9	4	FOPERATOR execute-result-update execute-result-update.soar 10
+10	4	FOPERATOR top-state top-state.soar 11
+11	0	HLOPERATOR begin-session begin-session.soar begin-session 11 12
+12	11	FOPERATOR elaborations elaborations.soar 13
+13	11	OPERATOR init-help init-help.soar 14
+14	11	OPERATOR opening opening.soar 15
+15	0	HLOPERATOR grounding-concept grounding-concept.soar grounding-concept 20 16
+16	15	FOPERATOR elaborations elaborations.soar 17
+17	15	OPERATOR confirm confirm.soar 18
+18	15	OPERATOR request request.soar 19
+19	0	OPERATOR initialize-letsgo initialize-letsgo.soar 20
+20	0	HLOPERATOR provide-info provide-info.soar provide-info 31 21
+21	20	FOPERATOR elaborations elaborations.soar 22
+22	20	OPERATOR db-lookup db-lookup.soar 23
+23	20	OPERATOR fail fail.soar 24
+24	20	OPERATOR lookup-message lookup-message.soar 25
+25	20	OPERATOR success success.soar 26
+26	0	HLOPERATOR restart-if-asked restart-if-asked.soar restart-if-asked 44 27
+27	26	FOPERATOR elaborations elaborations.soar 28
+28	26	OPERATOR ask-restart ask-restart.soar 29
+29	26	OPERATOR end-session end-session.soar 30
+30	0	HLOPERATOR verify-place verify-place.soar verify-place 53 31
+31	30	FOPERATOR elaborations elaborations.soar 32
+32	30	OPERATOR db-lookup db-lookup.soar 33
 END

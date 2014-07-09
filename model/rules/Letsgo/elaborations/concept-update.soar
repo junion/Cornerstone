@@ -77,13 +77,3 @@ sp {letsgo*select*concept-update
    (<s> ^operator <op> >)
 }
 
-sp {letsgo*select*user-opened-vs-concept-update
-   (state <s> ^name letsgo
-              ^operator <op1> +
-                        <op2> +)
-   (<op1> ^name user-opened)
-   (<op2> ^name concept-update)
--->
-   (<s> ^operator <op1> > <op2>)
-}
-

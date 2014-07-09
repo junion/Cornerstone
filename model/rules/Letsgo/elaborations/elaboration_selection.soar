@@ -1,0 +1,21 @@
+
+sp {letsgo*select*user-opened-vs-concept-update
+   (state <s> ^name letsgo
+              ^operator <op1> +
+                        <op2> +)
+   (<op1> ^name user-opened)
+   (<op2> ^name concept-update)
+-->
+   (<s> ^operator <op1> > <op2>)
+}
+
+
+sp {letsgo*select*execute-result-update-better
+   (state <s> ^name letsgo
+              ^operator <op1> +
+                        <op2> +)
+   (<op1> ^name execute-result-update)
+   (<op2> ^name <> execute-result-update)
+-->
+   (<s> ^operator <op1> > <op2>)
+}

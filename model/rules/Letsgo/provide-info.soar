@@ -16,7 +16,7 @@ sp {letsgo*propose*provide-info
 -->
    (<s> ^operator <op> +)
    (<op> ^name provide-info
-         ^priority 3
+         ^priority 4
          ^exec-args <args>)
    (<args> ^from <from-top>
            ^to <to-top>

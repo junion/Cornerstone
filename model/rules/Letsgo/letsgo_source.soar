@@ -22,3 +22,7 @@ source restart-if-asked.soar
 pushd restart-if-asked
 source restart-if-asked_source.soar
 popd
+source verify-place.soar
+pushd verify-place
+source verify-place_source.soar
+popd

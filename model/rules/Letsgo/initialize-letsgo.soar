@@ -11,7 +11,7 @@ sp {letsgo*apply*initialize-letsgo
    (<op> ^name initialize-letsgo)
 -->
    (<s> ^name letsgo)
-#   (<s> ^applied-actions nil)
+#   (<s> ^execute-result nil)
    (<s> ^concept-accept-thld 0.9
         ^concept-confirm-thld 0.4)
    (<s> ^concept-precedence <cp>)

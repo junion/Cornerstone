@@ -106,7 +106,7 @@ class Controller(object):
         self.app_logger.info('\nCreate input to rule engine')
         self.create_input_to_rule_engine(state)
         self.app_logger.info('\nGet outboound events from rule engine')
-        out_events = self.get_events('letsgo*propose*grounding-concept')
+        out_events = self.get_events(verbose=5, matches='provide-info*propose*success')
         self.app_logger.info('\n'+str(out_events))
         return out_events
         
@@ -157,40 +157,36 @@ class Controller(object):
 #         pprint(cmds)
         return events
     
-    def get_events(self, matches=False, verbose=False):
+    def get_events(self, verbose=0, matches=None):
         while True:
-            if matches:
-                if verbose:
-                    self.app_logger.info('\nbefore input phase------------------')
-                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d 4 i2'))
-                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d 4 s1'))
+            if verbose:
+                self.app_logger.info('\nbefore input phase------------------')
+                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d %d i2' % verbose))
+                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d %d s1' % verbose))
                 self.re_agent.ExecuteCommandLine('run -p 1')
-                if verbose:
-                    self.app_logger.info('\nbefore proposal phase------------------')
-                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d 4 i2'))
-                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d 4 s1'))
+                self.app_logger.info('\nbefore proposal phase------------------')
+                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d %d i2' % verbose))
+                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d %d s1' % verbose))
                 self.re_agent.ExecuteCommandLine('run -p 1')
-                if verbose:
-                    self.app_logger.info('\nbefore decision phase------------------')
-                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d 4 s1'))
-                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('matches --assertions --wmes'))
-                if isinstance(matches, basestring):
-                    self.app_logger.info('\nmatches production %s:' % matches)
-                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('matches -t -w %s' % matches))
-                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('predict'))
-                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('preferences S1 operator --names'))
+                self.app_logger.info('\nbefore decision phase------------------')
+                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d %d s1' % verbose))
+                if matches:
+                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('matches --assertions --wmes'))
+                    if isinstance(matches, basestring):
+                        self.app_logger.info('\nmatches production %s:' % matches)
+                        self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('matches -t -w %s' % matches))
+                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('predict'))
+                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('preferences S1 operator --names'))
                 self.re_agent.ExecuteCommandLine('run -p 1')
-                if verbose:
-                    self.app_logger.info('\nbefore apply phase------------------')
-                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d 4 s1'))
+                self.app_logger.info('\nbefore apply phase------------------')
+                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d %d s1' % verbose))
                 self.re_agent.ExecuteCommandLine('run -p 1')
-                if verbose:
-                    self.app_logger.info('\nbefore output phase------------------')
-                    self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d 4 i3'))
+                self.app_logger.info('\nbefore output phase------------------')
+                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d %d i3' % verbose))
             self.re_agent.RunSelf(1)
             if verbose:
-                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d 4 s1'))
-                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d 4 i3'))
+                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d %d s1' % verbose))
+                self.app_logger.info('\n'+self.re_agent.ExecuteCommandLine('print -d %d i3' % verbose))
             events = self.poll_events()
             if not events.empty():
                 return events

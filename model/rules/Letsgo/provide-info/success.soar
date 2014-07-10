@@ -1,6 +1,6 @@
 sp {provide-info*propose*success
    (state <s> ^name provide-info
-              ^top-state.applied-actions do-lookup
+              ^top-state.applied-actions schedule-query
               ^top-state.execute-result.schedule-query success)
 -->
    (<s> ^operator <op> +)
@@ -13,7 +13,9 @@ sp {provide-info*propose*success
    (<speech> ^act_type schedule)
    (<nlg> ^module NLG
           ^act inform
-          ^object result)
+          ^object result
+          ^type schedule
+          ^result schedule-query)
    (<tts> ^module TTS
           ^non-listening true
           ^non-repeatable true)

@@ -1,6 +1,7 @@
 sp {letsgo*propose*provide-info
    (state <s> ^name letsgo
-              ^concept-accept-thld <th>)
+              ^concept-accept-thld <th>
+             -^applied-actions success)
    (<s> ^user-goal.concept <from>)
    (<from> ^name from
            ^top-hyp.score > <th>

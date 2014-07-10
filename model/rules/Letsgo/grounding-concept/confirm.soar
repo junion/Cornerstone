@@ -21,7 +21,8 @@ sp {grounding-concept*propose*expl-conf
    (<nlg> ^module NLG
           ^act explicit_confirm
           ^object <obj>
-          ^query <val>
+          ^type concept
+          ^value <val>
           ^concept <cn>)
    (<asr> ^module ASR
           ^set_dtmf_len 1

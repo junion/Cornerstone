@@ -1,13 +1,13 @@
-sp {provide-info*propose*do-lookup
+sp {provide-info*propose*schedule-query
    (state <s> ^name provide-info
               ^top-state.applied-actions lookup-message
-             -^top-state.applied-actions db-lookup)
+             -^top-state.applied-actions schedule-query)
    (<s> ^superstate.operator <sop>)
    (<sop> ^exec-args <args>)
 -->
    (<s> ^operator <op> +)
-   (<op> ^name do-lookup
+   (<op> ^name schedule-query
          ^actions <act>)
    (<act> ^execute <args>)
-   (<args> ^operation schedule_query)
+   (<args> ^operation schedule-query)
 }

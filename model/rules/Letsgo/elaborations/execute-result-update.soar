@@ -1,6 +1,7 @@
 sp {letsgo*propose*execute-result-update
    (state <s> ^name letsgo
-              ^io.input-link.events.execute-result <er>)
+              ^io.input-link.events.execute-result <er>
+             -^execute-result <er>)
 -->
    (<s> ^operator <op> + =)
    (<op> ^name execute-result-update)

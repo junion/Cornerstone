@@ -37,7 +37,11 @@ class StateTracker(object):
         for event in in_events.get_events('state'):
             if event.state == 'execute-result':
                 state.execute_result = event.args
-        
+    
+    def update_concept_belief(self, state, inform_obs, affirm_obs,
+                              negate_obs):
+        raise NotImplementedError
+    
     def update_belief_state(self, state, in_events):
         for event in in_events.get_events('speech'):
             in_nbest = event.speech_nbest
@@ -51,6 +55,8 @@ class StateTracker(object):
             for concept in concepts:
                 inform_obs = in_nbest.marginal('inform', concept)
                 confirm_acts = out_nbest.marginal('expl-conf', concept)
+                if not confirm_acts:
+                    confirm_acts = out_nbest.marginal('impl-conf', concept)
                 affirm_obs = []
                 negate_obs = []
                 if confirm_acts:

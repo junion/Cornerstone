@@ -118,8 +118,8 @@ def request_from_generate_system_act(state):
                         asr_config = 'set_dtmf_len = 1, set_lm = place')
 request_from.custom_generate_system_act = request_from_generate_system_act
 def request_from_check_completion(state):
-    if len(state.belief_state.concepts['from']['hyps']) > 0 and\
-    state.belief_state.concepts['from']['hyps'][0]['score'] > 0.8:
+    if len(state.belief_state.concept_belief_states['from']['hyps']) > 0 and\
+    state.belief_state.concept_belief_states['from']['hyps'][0]['score'] > 0.8:
         return True
     return False
 request_from.custom_check_completion = request_from_check_completion
@@ -127,7 +127,7 @@ request_from.custom_check_completion = request_from_check_completion
     
 explicit_confirm_from = Method('atomic', 'explicit_confirm_from')
 def explicit_confirm_from_generate_system_act(state):
-    value = state.belief_state.concepts['from']['hyps'][0]['value']
+    value = state.belief_state.concept_belief_states['from']['hyps'][0]['value']
     query = 'query.departure_place\t{\nname\t%s\ntype\t%s\n}\n'%(value, state.place_type[value])
     return SystemAction('expl-conf', {'from.desc': value},
                         nlg_args = {'type': 'explicit_confirm', 
@@ -136,13 +136,13 @@ def explicit_confirm_from_generate_system_act(state):
                         asr_config = 'set_dtmf_len = 1, set_lm = yes_no')
 explicit_confirm_from.custom_generate_system_act = explicit_confirm_from_generate_system_act
 def explicit_confirm_from_check_completion(state):
-    if len(state.belief_state.concepts['from']['hyps']) > 0 and\
-    state.belief_state.concepts['from']['hyps'][0]['score'] > 0.8:
+    if len(state.belief_state.concept_belief_states['from']['hyps']) > 0 and\
+    state.belief_state.concept_belief_states['from']['hyps'][0]['score'] > 0.8:
         return True
     return False
 explicit_confirm_from.custom_check_completion = explicit_confirm_from_check_completion
 def explicit_confirm_from_check_precondition(state):
-    if len(state.belief_state.concepts['from']['hyps']) == 0:
+    if len(state.belief_state.concept_belief_states['from']['hyps']) == 0:
         return False
     return True
 explicit_confirm_from.custom_check_precondition = explicit_confirm_from_check_precondition
@@ -151,19 +151,19 @@ explicit_confirm_from.priority = 10
 
 execute_from_db_query = Method('atomic', 'execute_from_db_query')
 def execute_from_db_query_generate_system_act(state):
-    place = state.belief_state.concepts['from']['hyps'][0]['value']
+    place = state.belief_state.concept_belief_states['from']['hyps'][0]['value']
     return SystemAction('execute', {'operation': 'place_query', 
                                           'place': place, 
                                           'place_type': state.place_type[place]})
 execute_from_db_query.custom_generate_system_act = execute_from_db_query_generate_system_act
 def execute_from_db_query_check_completion(state):
-    place = state.belief_state.concepts['from']['hyps'][0]['value']
+    place = state.belief_state.concept_belief_states['from']['hyps'][0]['value']
     if hasattr(state, 'place_query_results') and place in state.place_query_results:
         return True
     return False
 execute_from_db_query.custom_check_completion = execute_from_db_query_check_completion
 def execute_from_db_query_check_precondition(state):
-    if len(state.belief_state.concepts['from']['hyps']) == 0:
+    if len(state.belief_state.concept_belief_states['from']['hyps']) == 0:
         return False
     return True
 execute_from_db_query.custom_check_precondition = execute_from_db_query_check_precondition
@@ -185,8 +185,8 @@ def request_to_generate_system_act(state):
                         asr_config = 'set_dtmf_len = 1, set_lm = place')
 request_to.custom_generate_system_act = request_to_generate_system_act
 def request_to_check_completion(state):
-    if len(state.belief_state.concepts['to']['hyps']) > 0 and\
-    state.belief_state.concepts['to']['hyps'][0]['score'] > 0.8:
+    if len(state.belief_state.concept_belief_states['to']['hyps']) > 0 and\
+    state.belief_state.concept_belief_states['to']['hyps'][0]['score'] > 0.8:
         return True
     return False
 request_to.custom_check_completion = request_to_check_completion
@@ -194,7 +194,7 @@ request_to.custom_check_completion = request_to_check_completion
     
 explicit_confirm_to = Method('atomic', 'explicit_confirm_to')
 def explicit_confirm_to_generate_system_act(state):
-    value = state.belief_state.concepts['to']['hyps'][0]['value']
+    value = state.belief_state.concept_belief_states['to']['hyps'][0]['value']
     query = 'query.arrival_place\t{\nname\t%s\ntype\t%s\n}\n'%(value, state.place_type[value])
     return SystemAction('expl-conf', {'to.desc': value},
                         nlg_args = {'type': 'explicit_confirm', 
@@ -203,13 +203,13 @@ def explicit_confirm_to_generate_system_act(state):
                         asr_config = 'set_dtmf_len = 1, set_lm = yes_no')
 explicit_confirm_to.custom_generate_system_act = explicit_confirm_to_generate_system_act
 def explicit_confirm_to_check_completion(state):
-    if len(state.belief_state.concepts['to']['hyps']) > 0 and\
-    state.belief_state.concepts['to']['hyps'][0]['score'] > 0.8:
+    if len(state.belief_state.concept_belief_states['to']['hyps']) > 0 and\
+    state.belief_state.concept_belief_states['to']['hyps'][0]['score'] > 0.8:
         return True
     return False
 explicit_confirm_to.custom_check_completion = explicit_confirm_to_check_completion
 def explicit_confirm_to_check_precondition(state):
-    if len(state.belief_state.concepts['to']['hyps']) == 0:
+    if len(state.belief_state.concept_belief_states['to']['hyps']) == 0:
         return False
     return True
 explicit_confirm_to.custom_check_precondition = explicit_confirm_to_check_precondition
@@ -218,19 +218,19 @@ explicit_confirm_to.priority = 10
 
 execute_to_db_query = Method('atomic', 'execute_to_db_query')
 def execute_to_db_query_generate_system_act(state):
-    place = state.belief_state.concepts['to']['hyps'][0]['value']
+    place = state.belief_state.concept_belief_states['to']['hyps'][0]['value']
     return SystemAction('execute', {'operation': 'place_query', 
                                           'place': place, 
                                           'place_type': state.place_type[place]})
 execute_to_db_query.custom_generate_system_act = execute_to_db_query_generate_system_act
 def execute_to_db_query_check_completion(state):
-    place = state.belief_state.concepts['to']['hyps'][0]['value']
+    place = state.belief_state.concept_belief_states['to']['hyps'][0]['value']
     if hasattr(state, 'place_query_results') and place in state.place_query_results:
         return True
     return False
 execute_to_db_query.custom_check_completion = execute_to_db_query_check_completion
 def execute_to_db_query_check_precondition(state):
-    if len(state.belief_state.concepts['to']['hyps']) == 0:
+    if len(state.belief_state.concept_belief_states['to']['hyps']) == 0:
         return False
     return True
 execute_to_db_query.custom_check_precondition = execute_to_db_query_check_precondition
@@ -246,8 +246,8 @@ def request_time_generate_system_act(state):
                         asr_config = 'set_dtmf_len = 1, set_lm = time')
 request_time.custom_generate_system_act = request_time_generate_system_act
 def request_time_check_completion(state):
-    if len(state.belief_state.concepts['time']['hyps']) > 0 and\
-    state.belief_state.concepts['time']['hyps'][0]['score'] > 0.3:
+    if len(state.belief_state.concept_belief_states['time']['hyps']) > 0 and\
+    state.belief_state.concept_belief_states['time']['hyps'][0]['score'] > 0.3:
         return True
     return False
 request_time.custom_check_completion = request_time_check_completion
@@ -255,7 +255,7 @@ request_time.custom_check_completion = request_time_check_completion
     
 explicit_confirm_time = Method('atomic', 'explicit_confirm_time')
 def explicit_confirm_time_generate_system_act(state):
-    value = state.belief_state.concepts['time']['hyps'][0]['value']
+    value = state.belief_state.concept_belief_states['time']['hyps'][0]['value']
     time_info = state.time_infos[value]
     app_logger.info('time info: %s'%str(time_info))
     if 'now' in time_info:
@@ -275,13 +275,13 @@ def explicit_confirm_time_generate_system_act(state):
                         asr_config = 'set_dtmf_len = 1, set_lm = yes_no')
 explicit_confirm_time.custom_generate_system_act = explicit_confirm_time_generate_system_act
 def explicit_confirm_time_check_completion(state):
-    if len(state.belief_state.concepts['time']['hyps']) > 0 and\
-    state.belief_state.concepts['time']['hyps'][0]['score'] > 0.3:
+    if len(state.belief_state.concept_belief_states['time']['hyps']) > 0 and\
+    state.belief_state.concept_belief_states['time']['hyps'][0]['score'] > 0.3:
         return True
     return False
 explicit_confirm_time.custom_check_completion = explicit_confirm_time_check_completion
 def explicit_confirm_time_check_precondition(state):
-    if len(state.belief_state.concepts['time']['hyps']) == 0:
+    if len(state.belief_state.concept_belief_states['time']['hyps']) == 0:
         return False
     return True
 explicit_confirm_time.custom_check_precondition = explicit_confirm_time_check_precondition
@@ -294,9 +294,9 @@ def provide_schedule_subtasks(state):
     return [('inform_looking_up_schedule',), ('execute_schedule_db_query',), ('inform_schedule',)]
 provide_schedule.custom_get_subtasks = provide_schedule_subtasks
 def provide_schedule_check_precondition(state):
-    if len(state.belief_state.concepts['from']['hyps']) == 0 or\
-    len(state.belief_state.concepts['to']['hyps']) == 0 or\
-    len(state.belief_state.concepts['time']['hyps']) == 0:
+    if len(state.belief_state.concept_belief_states['from']['hyps']) == 0 or\
+    len(state.belief_state.concept_belief_states['to']['hyps']) == 0 or\
+    len(state.belief_state.concept_belief_states['time']['hyps']) == 0:
         return False
     return True
 provide_schedule.custom_check_precondition = provide_schedule_check_precondition
@@ -323,9 +323,9 @@ inform_looking_up_schedule.custom_generate_system_act = inform_looking_up_schedu
 
 execute_schedule_db_query = Method('atomic', 'execute_schedule_db_query')
 def execute_schedule_db_query_generate_system_act(state):
-    place_from = state.belief_state.concepts['from']['hyps'][0]['value']
-    place_to = state.belief_state.concepts['to']['hyps'][0]['value']
-    time = state.belief_state.concepts['time']['hyps'][0]['value']
+    place_from = state.belief_state.concept_belief_states['from']['hyps'][0]['value']
+    place_to = state.belief_state.concept_belief_states['to']['hyps'][0]['value']
+    time = state.belief_state.concept_belief_states['time']['hyps'][0]['value']
     if hasattr(state, 'next_query'):
         return SystemAction('execute', {'operation': 'subsequent_schedule_query',
                                               'from': place_from,

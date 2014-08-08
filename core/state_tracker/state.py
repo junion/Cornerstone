@@ -14,8 +14,8 @@ class State(object):
         self.session_status = None
         # execution result
         self.execute_result = None
-        # concepts to track
-        self.concepts = {}
+        # concept belief states to track
+        self.concept_belief_states = {}
         # last speech outbound event
         self.last_speech_out_event = None    
 
@@ -23,9 +23,9 @@ class State(object):
         state_str = []
         state_str.append('State [')
         state_str.append('Concept belief states >>>>')    
-        for concept in self.concepts.keys():
+        for concept in self.concept_belief_states.keys():
             state_str.append(concept+':')
-            state_str.append(str(self.concepts[concept]))
+            state_str.append(str(self.concept_belief_states[concept]))
         state_str.append('Last speech outbound event >>>>')    
         state_str.append(str(self.last_speech_out_event))
         state_str.append(']')    

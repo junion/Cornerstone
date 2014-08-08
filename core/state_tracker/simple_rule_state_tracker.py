@@ -7,7 +7,7 @@ Created on Jul 1, 2014
 import logging
 
 from state_tracker import StateTracker
-from core.datatypes.concept_belief_state import ConceptBeliefState
+from core.datatypes.sorted_discrete_dist import SortedDiscreteDist
 
 
 MODULE_ID = 'SimpleRuleStateTracker'
@@ -19,19 +19,19 @@ class SimpleRuleStateTracker(StateTracker):
 
     def update_concept_belief(self, state, concept, inform_obs, 
                               affirm_obs, negate_obs):
-        if concept not in state.concepts:
-            cb_state = ConceptBeliefState()
+        if concept not in state.concept_belief_states:
+            cb_state = SortedDiscreteDist()
         else:
-            cb_state = state.concepts[concept]
+            cb_state = state.concept_belief_states[concept]
         for item, score in inform_obs:
             cb_state[item] = cb_state[item] + score
         for item, score in affirm_obs:
             cb_state[item] += score
         for item, score in negate_obs:
             cb_state[item] -= min(cb_state[item], score)
-        state.concepts[concept] = cb_state
+        state.concept_belief_states[concept] = cb_state
         self.app_logger.info('\nConcept %s update:\n%s' % 
-                             (concept, str(state.concepts[concept])))
+                             (concept, str(state.concept_belief_states[concept])))
                 
 
 if __name__ == '__main__':

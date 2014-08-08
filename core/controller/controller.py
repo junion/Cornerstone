@@ -78,14 +78,14 @@ class Controller(object):
             self.re_agent.CreateStringWME(exec_result, operation, result)
         # belief state
         # currently top, second, rest will be enough for decision making
-        # TODO: update only changed concepts
-        for concept in state.concepts.keys():
-#            self.app_logger.info('\nConcept %s update:\n%s' % str(state.concepts[concept]))
+        # TODO: update only changed concept_belief_states
+        for concept in state.concept_belief_states.keys():
+#            self.app_logger.info('\nConcept %s update:\n%s' % str(state.concept_belief_states[concept]))
             cu = self.re_agent.CreateIdWME(self.events, 'concept-update')
             self.re_agent.CreateStringWME(cu, 'name', concept)
             rest_score = 1.0
             for i, label in enumerate(['top-hyp', 'second-hyp']):
-                item = state.concepts[concept].get_item(i+1)
+                item = state.concept_belief_states[concept].get_item(i+1)
                 if item:
                     value, score = item
                 else:

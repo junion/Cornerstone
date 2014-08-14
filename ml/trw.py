@@ -1,5 +1,6 @@
 
 from copy import deepcopy
+from math import exp
 import numpy as np
 from pprint import pprint
 
@@ -11,11 +12,22 @@ class TRW(object):
         self.nodes = nodes
         self.node_vals = node_vals
         self.node_lpots = node_lpots
+        self.node_pots = deepcopy(node_lpots)
         self.edges = edges
         self.edge_lpots = edge_lpots
         self.edge_pots = deepcopy(edge_lpots)
         self.nbrs = {}
-        self.node_rhos = {}            
+        self.node_rhos = {} 
+        for node in self.nodes:
+            for val in self.node_pots[node]:
+                try:
+                    self.node_pots[node][val] = exp(self.node_lpots[node][val])
+                except OverflowError:
+                    print 'OverflowError'
+                    print node
+                    print val
+                    pprint(self.node_lpots[node][val])
+                    raise OverflowError
         for node in self.nodes:
             self.nbrs[node] = [edge[1] for edge in self.edges if edge[0] == node] +\
             [edge[0] for edge in self.edges if edge[1] == node]
@@ -170,15 +182,16 @@ class TRW(object):
         
     def get_log_likelihood(self, labels, zval=None):
         if zval == None:
-            _, zval = self.get_marginals_and_partition()
+            _, zval, _ = self.get_marginals_and_partition()
         if np.isinf(zval):
             return np.finfo(np.float32).min
         unnorm_lpot = 0.0
         for node in self.nodes:
-            if labels[node] == []:
-                _labels = ['None']
-            else:
-                _labels = labels[node]
+#             if not labels[node]:
+#                 _labels = [None]
+#             else:
+#                 _labels = labels[node]
+            _labels = labels[node]
             unnorm_lpot_multi_label = 0.0
             for label in _labels:
                 unnorm_lpot_multi_label += self.node_lpots[node][label]
@@ -186,14 +199,16 @@ class TRW(object):
             unnorm_lpot += unnorm_lpot_multi_label
         for edge in self.edges:
             node1, node2 = edge
-            if labels[node1] == []:
-                labels1 = ['None']
-            else:
-                labels1 = labels[node1]
-            if labels[node2] == []:
-                labels2 = ['None']
-            else:
-                labels2 = labels[node2]
+#             if not labels[node1]:
+#                 labels1 = [None]
+#             else:
+#                 labels1 = labels[node1]
+            labels1 = labels[node1]
+#             if not labels[node2]:
+#                 labels2 = [None]
+#             else:
+#                 labels2 = labels[node2]
+            labels2 = labels[node2]
             unnorm_lpot_multi_label = 0.0
             for label1 in labels1:
                 for label2 in labels2:

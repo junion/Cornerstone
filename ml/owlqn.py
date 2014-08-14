@@ -80,6 +80,12 @@ def simple_line_search_owlqn(f, old_fval, xk, pk, gfk, k, Cvec):
     if k == 0:
         alpha = 1.0 / (numpy.dot(pk,pk))**(0.5)
         backoff = 0.1
+    elif numpy.array_equal(-pk,gfk):
+        print '#########'
+        print 'HIT!!!!!'
+        print '#########'
+        alpha = 1.0 * (numpy.dot(xk,xk))**(0.5) / (numpy.dot(pk,pk))**(0.5)
+        backoff = 0.1
     c1 = 1e-4
     new_fval = None
     while True:

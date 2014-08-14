@@ -5,6 +5,7 @@ Created on Jul 1, 2014
 '''
 
 from copy import deepcopy
+from pprint import pprint
 
 class SortedDiscreteDist(object):
     """Sorted discrete probability distribution"""
@@ -12,8 +13,8 @@ class SortedDiscreteDist(object):
     def __init__(self, items=None):
         if items:
             self.items = deepcopy(items)
-            if 'None' in self.items:
-                del self.items['None']
+            if None in self.items:
+                del self.items[None]
         else:
             self.items = {}
         self.nbest = None
@@ -24,6 +25,7 @@ class SortedDiscreteDist(object):
         return len(self.items)
 
     def __getitem__(self, item):
+        self.normalize()
         if item in self.items:
             return self.items[item]
         else:
@@ -46,7 +48,7 @@ class SortedDiscreteDist(object):
     def __iter__(self):
         self.normalize()
         self.sort()
-        for item in self.nbest:
+        for item, _ in self.nbest:
             yield item
             
     def __str__(self):
@@ -55,16 +57,16 @@ class SortedDiscreteDist(object):
         
     def normalize(self):
         if not self.normalized:
-            if 'None' in self.items:
-                del self.items['None']
+            if None in self.items:
+                del self.items[None]
             total = sum(self.items.values())
-            self.items['None'] = max(0.0, 1.0-total) 
-            total += self.items['None']
+            self.items[None] = max(0.0, 1.0-total) 
+            total += self.items[None]
             for item in self.items:
                 self.items[item] /= total
             del_list = []
             for item in self.items:
-                if item != 'None' and self.items[item] < 1e-6:
+                if item != None and self.items[item] < 1e-6:
                     del_list.append(item)
             for item in del_list:
                 del self.items[item]
@@ -83,7 +85,7 @@ class SortedDiscreteDist(object):
 
     def get_sorted_item(self, n):
         nbest = self.get_nbest()
-        nbest = [item for item in nbest if item[0] != 'None']
+        nbest = [item for item in nbest if item[0] != None]
         if len(nbest) < n:
             return None
         return nbest[n-1]
@@ -92,7 +94,9 @@ class SortedDiscreteDist(object):
 if __name__ == '__main__':
     cb = SortedDiscreteDist()
     cb['CMU'] = 0.21
-    print cb    
-    print cb.get_item(1)
-    print cb.get_item(2)
+    print cb  
+    print cb['CMU']
+    print cb[None]  
+    print cb.get_sorted_item(1)
+    print cb.get_sorted_item(2)
 

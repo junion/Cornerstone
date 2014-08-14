@@ -17,8 +17,26 @@ class SimpleRuleStateTracker(StateTracker):
     def __init__(self):
         StateTracker.__init__(self)
 
-    def update_concept_belief(self, state, concept, inform_obs, 
-                              affirm_obs, negate_obs):
+    def update_concept_belief(self, concept, state, in_nbest):
+        inform_obs = in_nbest.marginal('inform', concept)
+        if state.last_speech_out_event:
+            out_nbest = state.last_speech_out_event.speech_nbest
+            confirm_acts = out_nbest.marginal('expl-conf', concept)
+            if not confirm_acts:
+                confirm_acts = out_nbest.marginal('impl-conf', concept)
+            affirm_obs = []
+            negate_obs = []
+            if confirm_acts:
+                affirm_obs = in_nbest.marginal('affirm')
+                if affirm_obs:
+                    affirm_score = affirm_obs[0][1]
+                    affirm_obs = [(c_act[0], affirm_score) 
+                                  for c_act in confirm_acts]
+                negate_obs = in_nbest.marginal('negate')
+                if negate_obs:
+                    negate_score = negate_obs[0][1]
+                    negate_obs = [(c_act[0], negate_score) 
+                                  for c_act in confirm_acts]
         if concept not in state.concept_belief_states:
             cb_state = SortedDiscreteDist()
         else:

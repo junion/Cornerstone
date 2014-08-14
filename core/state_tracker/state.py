@@ -26,7 +26,7 @@ class State(object):
         for concept in self.concept_belief_states.keys():
             state_str.append(concept+':')
             state_str.append(str(self.concept_belief_states[concept]))
-        state_str.append('Last speech outbound event >>>>')    
+        state_str.append('Last outbound speech event >>>>')    
         state_str.append(str(self.last_speech_out_event))
         state_str.append(']')    
         return '\n'.join(state_str)

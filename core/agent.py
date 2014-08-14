@@ -8,7 +8,7 @@ import logging
 
 from config.global_config import get_config
 from core.state_tracker.state import State
-from core.state_tracker.state_tracker import SimpleRuleStateTracker
+from core.state_tracker.simple_rule_state_tracker import SimpleRuleStateTracker
 from core.controller.controller import Controller
 
 
